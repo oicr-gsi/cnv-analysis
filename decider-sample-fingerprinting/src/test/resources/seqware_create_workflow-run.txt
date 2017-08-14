@@ -1,6 +1,0 @@
-psql -d seqware_1_1_0_beta0_150105 -t --no-align --field-separator ' ' --quiet -c " \
-select distinct(processing_swa) from file_provenance_report 
-where file_meta_type = 'application/bam' and 
-workflow_swa in (942767,375928,23341) and 
-coalesce(substring(sample_attrs FROM 'geo_library_source_template_type=([^;]*).*$'), substring(sample_parent_attrs FROM 'geo_library_source_template_type.[0-9]*=([^;]*).*$'), '') in ('WG','EX') and 
-study_title in ('ABvsInvitrogenReagentComp','AshPC') or sequencer_run_name in ('121011_SN802_0091_AD1DDBACXX')" | xargs -n 1 -i -P 20 sh -c "SEQWARE_SETTINGS=.seqware/testing seqware create workflow-run --workflow-accession 1452534 --parent-accession {} --file mock_ProvisionFiles::text/plain::/does/not/exist/sample.fin,mock_ProvisionFiles::application/tbi::/does/not/exist/sample.snps.raw.vcf.gz.tbi,mock_ProvisionFiles::application/vcf-4-gzip::/does/not/exist/sample.snps.raw.vcf.gz"
