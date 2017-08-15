@@ -1,10 +1,10 @@
 {
     "defaults": {
-        "description": "CNV workflow test",
+        "description": "BicSeq workflow test",
         "metrics_calculate": "calculate.sh",
         "metrics_compare": "compare.sh",
-        "input_config_dir": "/.mounts/labs/PDE/data/RegressionTests/CNV/workflow/input_config/",
-        "output_metrics_dir": "/.mounts/labs/PDE/data/RegressionTests/CNV/workflow/output_expectation/"
+        "input_config_dir": "/.mounts/labs/PDE/data/RegressionTests/BicSeq/workflow/input_config/",
+        "output_metrics_dir": "/.mounts/labs/PDE/data/RegressionTests/BicSeq/workflow/output_expectation/"
     },
     "tests": [
         {
