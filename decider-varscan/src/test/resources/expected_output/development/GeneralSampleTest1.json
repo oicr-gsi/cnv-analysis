@@ -12,7 +12,7 @@
   "totalInputFiles" : 8,
   "workflowRuns" : [ {
     "workflowIni" : {
-      "R_module" : "R/3.2.1",
+      "R_module" : "R/3.2.1-deb8",
       "Rlibs_version" : "3.2",
       "bicseq_version" : "1.1.2",
       "data_dir" : "data",

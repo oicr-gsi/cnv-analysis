@@ -20,20 +20,22 @@
     <properties>
         <workflow-name>BicSeq</workflow-name>
         <testSuite>src/test/resources/testng.xml</testSuite>
+        <samtools-version>0.1.19</samtools-version>
+        <bicseq-version>1.1.2</bicseq-version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>samtools</groupId>
             <artifactId>samtools</artifactId>
-            <version>0.1.19</version>
+            <version>${samtools-version}</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>BICseq</groupId>
             <artifactId>BICseq</artifactId>
-            <version>1.1.2</version>
+            <version>${bicseq-version}</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>

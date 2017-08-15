@@ -29,7 +29,7 @@ import net.sourceforge.seqware.common.util.Log;
  * issue this command:
  * export _JAVA_OPTIONS="-Xmx3000M"
  */
-public class CNVDecider extends OicrDecider {
+public class BicSeqDecider extends OicrDecider {
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
     private Map<String, BeSmall> fileSwaToSmall;
 
@@ -42,8 +42,10 @@ public class CNVDecider extends OicrDecider {
     private String output_dir      = "seqware-results";
     private String skipMissing     = "true";
     private String manual_output   = "false";
-    private String forceCrosscheck = "true";
     private String do_sort         = "false";
+    private String rmodule         = "R/3.2.1-deb8";
+    private String biqseqInterval  = "";
+    private String biqseqSpread    = "";
 
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
@@ -54,7 +56,7 @@ public class CNVDecider extends OicrDecider {
     private String targetFile = " ";
     private List<String> duplicates;
     
-    public CNVDecider() {
+    public BicSeqDecider() {
         super();
         fileSwaToSmall  = new HashMap<String, BeSmall>();
         parser.acceptsAll(Arrays.asList("ini-file"), "Optional: the location of the INI file.").withRequiredArg();
@@ -62,14 +64,13 @@ public class CNVDecider extends OicrDecider {
                 + "either to true or false").withRequiredArg();
         parser.accepts("template-type","Required. Set the template type to limit the workflow run "
                 + "so that it runs on data only of this template type").withRequiredArg();
-        parser.accepts("aligner-software","Optional. Set the name of the aligner software "
-                + "when running the workflow, the default is novocraft").withRequiredArg();
-        parser.accepts("force-crosscheck","Optional. Set the crosscheck to true or false "
-                + "when running the workflow, the default is true").withRequiredArg();
+        parser.accepts("r-module","Optional. Set the R module to load in order to run HMMcopy scripts ").withRequiredArg();
         parser.accepts("output-path", "Optional: the path where the files should be copied to "
                 + "after analysis. Corresponds to output-prefix in INI file. Default: ./").withRequiredArg();
         parser.accepts("output-folder", "Optional: the name of the folder to put the output into relative to "
 	        + "the output-path. Corresponds to output-dir in INI file. Default: seqware-results").withRequiredArg();
+        parser.accepts("biqseq-interval", "Optional: Interval parameter used by BicSeq (Default: 150)").withRequiredArg();
+        parser.accepts("biqseq-spread", "Optional: Spread parameter used by BicSeq (Default: 20)").withRequiredArg();       
         parser.accepts("queue", "Optional: Set the queue (Default: not set)").withRequiredArg();
         parser.accepts("tumor-type", "Optional: Set tumor tissue type to something other than primary tumor (P), i.e. X . Default: Not set (All)").withRequiredArg();
         parser.accepts("do-sort", "Optional: Set the flag (true or false) to indicate if need to sort bam files. Default: false").withRequiredArg();
@@ -82,7 +83,6 @@ public class CNVDecider extends OicrDecider {
     public ReturnValue init() {
         Log.debug("INIT");
 	this.setMetaType(Arrays.asList(BAM_METATYPE));
-        this.setGroupingStrategy(Header.FILE_SWA);
                 
         ReturnValue rv = super.init();
         rv.setExitStatus(ReturnValue.SUCCESS);
@@ -127,20 +127,27 @@ public class CNVDecider extends OicrDecider {
             Log.debug("Setting manual output, default is false and needs to be set only in special cases");
 	}
         
+        if (this.options.has("r-module")) {
+            this.rmodule = options.valueOf("r-module").toString();
+            Log.debug("Setting R module parameter, default is  R/3.2.1-deb8 and needs to be changed only in special cases");
+	}
         
         if (this.options.has("tumor-type")) {
             this.tumorType = options.valueOf("tumor-type").toString();
             Log.debug("Setting tumor type to " + this.tumorType +  " as requested");
 	}
         
-        if (this.options.has("force-crosscheck")) {
-            String crosscheck = options.valueOf("force-crosscheck").toString();
-            if (!crosscheck.isEmpty()) {
-              this.forceCrosscheck = crosscheck.equalsIgnoreCase("true") ? "true" : "false";
-              Log.debug("Setting force crosscheck to " + this.forceCrosscheck);
-            }
-	} 
+        if (this.options.has("biqseq-interval")) {
+            this.biqseqInterval = options.valueOf("biqseq-interval").toString();
+            Log.debug("Setting BiqSeq interval, default is 150");
+	}
         
+        if (this.options.has("biqseq-spread")) {
+            this.biqseqSpread = options.valueOf("biqseq-spread").toString();
+            Log.debug("Setting BiqSeq spread, default is 20");
+	}
+        
+       
         if (this.options.has("verbose")) {
             Log.setVerbose(true);
 	} 
@@ -396,11 +403,7 @@ public class CNVDecider extends OicrDecider {
             }
         }
         
-        //reset test mode
-        if (!this.options.has("test")) {
-            this.setTest(false);
-        }
-        
+      
         // Just in case
         // This should handle possible problems with --force-run-all
         if (inputNormFiles.length() == 0 || inputTumrFiles.length() == 0) {
@@ -425,9 +428,14 @@ public class CNVDecider extends OicrDecider {
         }
 
         iniFileMap.put("manual_output",  this.manual_output);
-        iniFileMap.put("force_crosscheck",  this.forceCrosscheck);
         iniFileMap.put("skip_missing_files", this.skipMissing);
         iniFileMap.put("do_sort", this.do_sort);
+        iniFileMap.put("R_module", this.rmodule);
+        if (!this.biqseqInterval.isEmpty())
+            iniFileMap.put("biqseq_interval", this.biqseqInterval);
+        if (!this.biqseqSpread.isEmpty())
+            iniFileMap.put("biqseq_spread", this.biqseqSpread);
+        
         
         //Note that we can use group_id, group_description and external_name for tumor bams only
         if (null != groupIds && groupIds.length() != 0 && !groupIds.toString().contains("NA")) {
@@ -456,7 +464,7 @@ public class CNVDecider extends OicrDecider {
  
         List<String> params = new ArrayList<String>();
         params.add("--plugin");
-        params.add(CNVDecider.class.getCanonicalName());
+        params.add(BicSeqDecider.class.getCanonicalName());
         params.add("--");
         params.addAll(Arrays.asList(args));
         System.out.println("Parameters: " + Arrays.deepToString(params.toArray()));

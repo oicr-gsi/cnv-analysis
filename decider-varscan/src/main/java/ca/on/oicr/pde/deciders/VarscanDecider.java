@@ -29,7 +29,7 @@ import net.sourceforge.seqware.common.util.Log;
  * issue this command:
  * export _JAVA_OPTIONS="-Xmx3000M"
  */
-public class CNVDecider extends OicrDecider {
+public class VarscanDecider extends OicrDecider {
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
     private Map<String, BeSmall> fileSwaToSmall;
 
@@ -44,6 +44,7 @@ public class CNVDecider extends OicrDecider {
     private String manual_output   = "false";
     private String forceCrosscheck = "true";
     private String do_sort         = "false";
+    private String rmodule         = "R/3.2.1-deb8";
 
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
@@ -54,7 +55,7 @@ public class CNVDecider extends OicrDecider {
     private String targetFile = " ";
     private List<String> duplicates;
     
-    public CNVDecider() {
+    public VarscanDecider() {
         super();
         fileSwaToSmall  = new HashMap<String, BeSmall>();
         parser.acceptsAll(Arrays.asList("ini-file"), "Optional: the location of the INI file.").withRequiredArg();
@@ -62,8 +63,7 @@ public class CNVDecider extends OicrDecider {
                 + "either to true or false").withRequiredArg();
         parser.accepts("template-type","Required. Set the template type to limit the workflow run "
                 + "so that it runs on data only of this template type").withRequiredArg();
-        parser.accepts("aligner-software","Optional. Set the name of the aligner software "
-                + "when running the workflow, the default is novocraft").withRequiredArg();
+        parser.accepts("r-module","Optional. Set the R module to load in order to run FREEC scripts ").withRequiredArg();
         parser.accepts("force-crosscheck","Optional. Set the crosscheck to true or false "
                 + "when running the workflow, the default is true").withRequiredArg();
         parser.accepts("output-path", "Optional: the path where the files should be copied to "
@@ -122,6 +122,11 @@ public class CNVDecider extends OicrDecider {
             } 
 	}
         
+        if (this.options.has("r-module")) {
+            this.rmodule = options.valueOf("r-module").toString();
+            Log.debug("Setting R module parameter, default is  R/3.2.1-deb8 and needs to be changed only in special cases");
+	}
+         
         if (this.options.has("manual-output")) {
             this.manual_output = options.valueOf("manual_output").toString();
             Log.debug("Setting manual output, default is false and needs to be set only in special cases");
@@ -203,6 +208,7 @@ public class CNVDecider extends OicrDecider {
         String[] filePaths = commaSeparatedFilePaths.split(",");
         boolean haveNorm = false;
         boolean haveTumr = false;
+        int countNorm = 0;
         
         // Check for duplicate file names and exclude them from analysis
         this.duplicates = detectDuplicates(commaSeparatedFilePaths);
@@ -220,15 +226,19 @@ public class CNVDecider extends OicrDecider {
 
                 if (!tt.isEmpty() && tt.equals("R")) {
                     haveNorm = true;
+                    countNorm += 1;
                 } else if (!tt.isEmpty()) {
                     haveTumr = true;
                 }
             }
         }
-        if (haveNorm && haveTumr) {
+        if (countNorm == 1 && haveTumr) {
          return super.doFinalCheck(commaSeparatedFilePaths, commaSeparatedParentAccessions);
         } 
-            
+        if (countNorm > 1) {
+            Log.error("Multiple Normals detected, WON'T RUN");
+            return new ReturnValue(ReturnValue.INVALIDPARAMETERS);
+        }
         String absent = haveNorm ? "Tumor" : "Normal";
         Log.error("Data for " + absent + " tissue are not available, WON'T RUN");
         return new ReturnValue(ReturnValue.INVALIDPARAMETERS);
@@ -423,6 +433,7 @@ public class CNVDecider extends OicrDecider {
         } else {
          iniFileMap.put("queue", " ");
         }
+        iniFileMap.put("R_module", this.rmodule);
 
         iniFileMap.put("manual_output",  this.manual_output);
         iniFileMap.put("force_crosscheck",  this.forceCrosscheck);
@@ -456,7 +467,7 @@ public class CNVDecider extends OicrDecider {
  
         List<String> params = new ArrayList<String>();
         params.add("--plugin");
-        params.add(CNVDecider.class.getCanonicalName());
+        params.add(VarscanDecider.class.getCanonicalName());
         params.add("--");
         params.addAll(Arrays.asList(args));
         System.out.println("Parameters: " + Arrays.deepToString(params.toArray()));

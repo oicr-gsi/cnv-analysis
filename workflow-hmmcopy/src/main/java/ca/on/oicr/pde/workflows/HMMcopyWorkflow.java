@@ -42,9 +42,6 @@ public class HMMcopyWorkflow extends OicrWorkflow {
     //Misc
     private String dataDir;
     private String tempDir;
-    private int bicseqInterval;
-    private int bicseqSpread;
-
     private boolean skipFlag;
     private static final boolean DEFAULT_SKIP_IF_MISSING = true;  // Conditional provisioning
     private static final String HMMCOPY_PREFIX = "hmmcopy_";

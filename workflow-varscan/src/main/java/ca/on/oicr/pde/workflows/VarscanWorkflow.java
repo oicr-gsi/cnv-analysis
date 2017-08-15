@@ -238,17 +238,16 @@ public class VarscanWorkflow extends OicrWorkflow {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
         }
     }
-
-           
+          
 
     /**
      * Varscan configuring/launching
      */
     private void launchVarscan(String inputNormal, String inputTumor, int id, List<Job> parents) {
         
-        Job varscanJob = this.getWorkflow().createBashJob("launch_varscan");   
+        Job varscanJob   = this.getWorkflow().createBashJob("launch_varscan");   
         String outputDir = this.dataDir + "Varscan2." + id + "/"; 
-        String resultID = VARSCAN_PREFIX + this.makeBasename(inputNormal, ".bam") + ".vs." 
+        String resultID  = VARSCAN_PREFIX + this.makeBasename(inputNormal, ".bam") + ".vs." 
                                          + this.makeBasename(inputTumor,  ".bam");
         varscanJob.setCommand("module load " + this.rModule + ";"
                             + getWorkflowBaseDir() + "/dependencies/launchVarscan2.pl"

@@ -29,7 +29,7 @@ import net.sourceforge.seqware.common.util.Log;
  * issue this command:
  * export _JAVA_OPTIONS="-Xmx3000M"
  */
-public class CNVDecider extends OicrDecider {
+public class HMMcopyDecider extends OicrDecider {
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
     private Map<String, BeSmall> fileSwaToSmall;
 
@@ -53,8 +53,10 @@ public class CNVDecider extends OicrDecider {
     private String tumorType;
     private String targetFile = " ";
     private List<String> duplicates;
+    private String rmodule    = "R/3.2.1-deb8";
+    private String supportedChromosomes = "";
     
-    public CNVDecider() {
+    public HMMcopyDecider() {
         super();
         fileSwaToSmall  = new HashMap<String, BeSmall>();
         parser.acceptsAll(Arrays.asList("ini-file"), "Optional: the location of the INI file.").withRequiredArg();
@@ -62,6 +64,9 @@ public class CNVDecider extends OicrDecider {
                 + "either to true or false").withRequiredArg();
         parser.accepts("template-type","Required. Set the template type to limit the workflow run "
                 + "so that it runs on data only of this template type").withRequiredArg();
+        parser.accepts("supported-chromosomes","Optional. Set the supported chromosmes by using a comma-delimited list "
+                + "default is canonical human chromosomes").withRequiredArg();
+        parser.accepts("r-module","Optional. Set the R module to load in order to run HMMcopy scripts ").withRequiredArg();
         parser.accepts("aligner-software","Optional. Set the name of the aligner software "
                 + "when running the workflow, the default is novocraft").withRequiredArg();
         parser.accepts("force-crosscheck","Optional. Set the crosscheck to true or false "
@@ -127,10 +132,19 @@ public class CNVDecider extends OicrDecider {
             Log.debug("Setting manual output, default is false and needs to be set only in special cases");
 	}
         
+        if (this.options.has("r-module")) {
+            this.rmodule = options.valueOf("r-module").toString();
+            Log.debug("Setting R module parameter, default is  R/3.2.1-deb8 and needs to be changed only in special cases");
+	}
         
         if (this.options.has("tumor-type")) {
             this.tumorType = options.valueOf("tumor-type").toString();
             Log.debug("Setting tumor type to " + this.tumorType +  " as requested");
+	}
+        
+        if (this.options.has("supported-chromosomes")) {
+            this.supportedChromosomes = options.valueOf("supported-chromosomes").toString();
+            //Log.debug("Setting tumor type to " + this.tumorType +  " as requested");
 	}
         
         if (this.options.has("force-crosscheck")) {
@@ -428,6 +442,11 @@ public class CNVDecider extends OicrDecider {
         iniFileMap.put("force_crosscheck",  this.forceCrosscheck);
         iniFileMap.put("skip_missing_files", this.skipMissing);
         iniFileMap.put("do_sort", this.do_sort);
+        iniFileMap.put("R_module", this.rmodule);
+        
+        if (!this.supportedChromosomes.isEmpty()) {
+            iniFileMap.put("supported_chromosomes", this.supportedChromosomes);
+        }
         
         //Note that we can use group_id, group_description and external_name for tumor bams only
         if (null != groupIds && groupIds.length() != 0 && !groupIds.toString().contains("NA")) {
@@ -456,7 +475,7 @@ public class CNVDecider extends OicrDecider {
  
         List<String> params = new ArrayList<String>();
         params.add("--plugin");
-        params.add(CNVDecider.class.getCanonicalName());
+        params.add(HMMcopyDecider.class.getCanonicalName());
         params.add("--");
         params.addAll(Arrays.asList(args));
         System.out.println("Parameters: " + Arrays.deepToString(params.toArray()));

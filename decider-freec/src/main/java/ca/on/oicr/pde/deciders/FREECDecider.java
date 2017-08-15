@@ -44,7 +44,7 @@ public class FREECDecider extends OicrDecider {
     private String manual_output   = "false";
     private String forceCrosscheck = "true";
     private String do_sort         = "false";
-    private STring rmodule         = "R/3.2.1-deb8";
+    private String rmodule         = "R/3.2.1-deb8";
 
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
@@ -64,8 +64,6 @@ public class FREECDecider extends OicrDecider {
         parser.accepts("template-type","Required. Set the template type to limit the workflow run "
                 + "so that it runs on data only of this template type").withRequiredArg();
         parser.accepts("r-module","Optional. Set the R module to load in order to run FREEC scripts ").withRequiredArg();
-        parser.accepts("aligner-software","Optional. Set the name of the aligner software "
-                + "when running the workflow, the default is novocraft").withRequiredArg();
         parser.accepts("force-crosscheck","Optional. Set the crosscheck to true or false "
                 + "when running the workflow, the default is true").withRequiredArg();
         parser.accepts("output-path", "Optional: the path where the files should be copied to "
@@ -208,8 +206,9 @@ public class FREECDecider extends OicrDecider {
     @Override
     protected ReturnValue doFinalCheck(String commaSeparatedFilePaths, String commaSeparatedParentAccessions) {
         String[] filePaths = commaSeparatedFilePaths.split(",");
-        int haveNorm = 0;
+        boolean haveNorm = false;
         boolean haveTumr = false;
+        int countNorm = 0;
         
         // Check for duplicate file names and exclude them from analysis
         this.duplicates = detectDuplicates(commaSeparatedFilePaths);
@@ -226,17 +225,18 @@ public class FREECDecider extends OicrDecider {
                 
 
                 if (!tt.isEmpty() && tt.equals("R")) {
-                    haveNorm += 1;
+                    countNorm += 1;
+                    haveNorm = true;
                 } else if (!tt.isEmpty()) {
                     haveTumr = true;
                 }
             }
         }
-        if (haveNorm == 1 && haveTumr) {
-         return super.doFinalCheck(commaSeparatedFilePaths, commaSeparatedParentAccessions);
+        if (countNorm == 1 && haveTumr) {
+            return super.doFinalCheck(commaSeparatedFilePaths, commaSeparatedParentAccessions);
         } 
             
-        if (haveNorm > 1) {
+        if (countNorm > 1) {
             Log.error("Multiple Normals detected, WON'T RUN");
             return new ReturnValue(ReturnValue.INVALIDPARAMETERS);
         }

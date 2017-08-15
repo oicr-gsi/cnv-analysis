@@ -1,8 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="CNVDeciderTestSuite" parallel="methods" thread-count="20">
+<suite name="BiqSeqDeciderTestSuite" parallel="methods" thread-count="20">
     <test name="Test1">
         <classes>
-            <parameter name="testDefinition" value="/CNVDeciderTests.json"/>
+            <parameter name="testDefinition" value="/BicSeqDeciderTests.json"/>
             <class name="ca.on.oicr.pde.testing.DeciderRunTestFactory"/>
         </classes>
     </test>
