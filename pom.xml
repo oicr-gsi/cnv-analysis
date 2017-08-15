@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<modelVersion>4.0.0</modelVersion>
     <groupId>ca.on.oicr.pde</groupId>
-    <artifactId>sample-fingerprinting</artifactId>
+    <artifactId>cnv-analysis</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>decider-fingerprint-collector</module>
-        <module>decider-sample-fingerprinting</module>
-        <module>workflow-fingerprint-collector</module>
-        <module>workflow-sample-fingerprinting</module>
+        <module>decider-hmmcopy</module>
+        <module>decider-bicseq</module>
+        <module>decider-varscan</module>
+        <module>decider-freec</module>
+        <module>workflow-hmmcopy</module>
+        <module>workflow-bicseq</module>
+        <module>workflow-varscan</module>
+        <module>workflow-freec</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
