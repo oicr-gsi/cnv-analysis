@@ -21,7 +21,7 @@ public class BicSeqWorkflow extends OicrWorkflow {
     private boolean manualOutput;
     private boolean doSort = true;
     private String  queue;
-    private String  templateType;
+    private String  templateType = "";
        
     //Data
     private String[] normal;
@@ -42,8 +42,7 @@ public class BicSeqWorkflow extends OicrWorkflow {
     private static final String BICSEQ_S_DEFAULT         = "20";
     private static final boolean DEFAULT_SKIP_IF_MISSING = true;  // Conditional provisioning
     private static final String BICSEQ_PREFIX  = "bicseq_";
-    private final static String WG           = "WG";
-    private final static String EX           = "EX";    
+    private final static String WG           = "WG";    
     
     @Override
     public Map<String, SqwFile> setupFiles() {
@@ -67,6 +66,11 @@ public class BicSeqWorkflow extends OicrWorkflow {
                     }
             }
 
+            //=====================Issue a warning if have anything other than WG, the wf will terminate shortly after
+            if (this.templateType == null && !this.templateType.equals(WG)) {
+                 Logger.getLogger(BicSeqWorkflow.class.getName()).log(Level.SEVERE, "template type set to {0} which is not supported for this workflow", this.templateType);
+            }
+            
             //=====================Application Versions           
             this.bicseqVersion   = getProperty("bicseq_version");
             this.samtoolsVersion = getProperty("samtools_version");
@@ -200,7 +204,7 @@ public class BicSeqWorkflow extends OicrWorkflow {
                 * Need to think how to configure this for crosscheck properly 
                 * if we don't have reference (TBD next iteration)
                 */
-               if (this.templateType.equals(WG) || this.templateType.equals(EX)) {
+               if (this.templateType.equals(WG)) {
                  // LAUNCH BICseq
                  launchBicSeq(this.localInputNormalFiles[n],
                               this.localInputTumorFiles[t], n + 1, sortJobs);

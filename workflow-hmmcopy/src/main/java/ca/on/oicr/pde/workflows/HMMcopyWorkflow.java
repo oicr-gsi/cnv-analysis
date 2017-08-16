@@ -18,7 +18,7 @@ public class HMMcopyWorkflow extends OicrWorkflow {
     private String rModule;
     private String rLibDir;
     
-    private String templateType;
+    private String templateType = "";
             
     //References
     private boolean manualOutput;
@@ -46,8 +46,7 @@ public class HMMcopyWorkflow extends OicrWorkflow {
     private static final boolean DEFAULT_SKIP_IF_MISSING = true;  // Conditional provisioning
     private static final String HMMCOPY_PREFIX = "hmmcopy_";
     private static final String RLIBDIR_BASE   = "CNV.R_modules-";
-    private final static String WG           = "WG";
-    private final static String EX           = "EX";
+    private final static String WG             = "WG";
     
     @Override
     public Map<String, SqwFile> setupFiles() {
@@ -72,6 +71,11 @@ public class HMMcopyWorkflow extends OicrWorkflow {
                                 + "check your .ini file");
                         return (null);
                     }
+            }
+            
+            //=====================Issue a warning if have anything other than WG, the wf will terminate shortly after
+            if (this.templateType == null && !this.templateType.equals(WG)) {
+                 Logger.getLogger(HMMcopyWorkflow.class.getName()).log(Level.SEVERE, "template type set to {0} which is not supported for this workflow", this.templateType);
             }
 
             //=====================Application Versions           
@@ -206,7 +210,7 @@ public class HMMcopyWorkflow extends OicrWorkflow {
                 * TODO need to think how to configure this for crosscheck properly 
                 * if we don't have reference (TBD next iteration)
                 */
-               if (this.templateType.equals(WG) || this.templateType.equals(EX)) {
+               if (this.templateType.equals(WG)) {
                  // LAUNCH HMMcopy
                  launchHMMcopy(this.localInputNormalFiles[n],
                                this.localInputTumorFiles[t], n + 1, sortJobs);                              

@@ -49,10 +49,7 @@ public class VarscanDecider extends OicrDecider {
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
     private final static String EX           = "EX";
-    private String rsconfigXmlPath           = "/.mounts/labs/PDE/data/rsconfig.xml";
-    private Rsconfig rs;
     private String tumorType;
-    private String targetFile = " ";
     private List<String> duplicates;
     
     public VarscanDecider() {
@@ -172,28 +169,6 @@ public class VarscanDecider extends OicrDecider {
             Log.stderr("Using --force-run-all WILL BREAK THE LOGIC OF THIS DECIDER, USE AT YOUR OWN RISK");
         }
         
-         if (options.has("rsconfig-file")) {
-            if (!options.hasArgument("rsconfig-file")) {
-                Log.error("--rsconfig-file requires a file argument.");
-                rv.setExitStatus(ReturnValue.INVALIDARGUMENT);
-                return rv;
-            }
-            if (!fileExistsAndIsAccessible(options.valueOf("rsconfig-file").toString())) {
-                Log.error("The rsconfig-file is not accessible.");
-                rv.setExitStatus(ReturnValue.FILENOTREADABLE);
-                return rv;
-            } else {
-                rsconfigXmlPath = options.valueOf("rsconfig-file").toString();
-            }
-        }
-
-        try {
-            rs = new Rsconfig(new File(rsconfigXmlPath));
-        } catch (Exception e) {
-            Log.error("Rsconfig file did not load properly, exeception stack trace:\n" + e.getStackTrace());
-            rv.setExitStatus(ReturnValue.FAILURE);
-            return rv;
-        }
 
         return rv;
     }
@@ -264,19 +239,6 @@ public class VarscanDecider extends OicrDecider {
         
         if (this.templateType.isEmpty() || !this.templateType.equals(currentTtype)) {
             this.templateType = currentTtype;
-        }
-        String target_bed = rs.get(currentTtype, targetResequencingType, "interval_file");
-
-        if (!currentTtype.equals(WG) && target_bed != null && !target_bed.isEmpty()) {
-            this.targetFile = target_bed;
-        } else if (!currentTtype.equals(WG) && (target_bed == null || target_bed.isEmpty())) {
-            
-            Log.error("For the file with SWID = [" + returnValue.getAttribute(Header.FILE_SWA.getTitle())
-                    + "], the template type/geo_library_source_template_type = [" + currentTtype
-                    + "] and resequencing type/geo_targeted_resequencing = [" + targetResequencingType
-                    + "] could not be found in rsconfig.xml (path = [" + rsconfigXmlPath + "])");
-            return false;
-            
         }
          
         for (FileMetadata fmeta : returnValue.getFiles()) {
@@ -424,7 +386,6 @@ public class VarscanDecider extends OicrDecider {
         iniFileMap.put("input_files_tumor",  inputTumrFiles.toString());
         iniFileMap.put("data_dir", "data");
         iniFileMap.put("template_type", this.templateType);
-        iniFileMap.put("target_file", this.targetFile);
  
 	iniFileMap.put("output_prefix",this.output_prefix);
 	iniFileMap.put("output_dir", this.output_dir);
