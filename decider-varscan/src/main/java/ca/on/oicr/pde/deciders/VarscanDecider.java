@@ -45,12 +45,16 @@ public class VarscanDecider extends OicrDecider {
     private String forceCrosscheck = "true";
     private String do_sort         = "false";
     private String rmodule         = "R/3.2.1-deb8";
+    private String varscanPvalueThreshold;
+    private String varscanJavaXmx;
 
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
     private final static String EX           = "EX";
     private String tumorType;
     private List<String> duplicates;
+    private final static String PVALUE         = "0.05";
+    private static final String VARSCAN_JAVA_MEM = "4";
     
     public VarscanDecider() {
         super();
@@ -72,6 +76,8 @@ public class VarscanDecider extends OicrDecider {
         parser.accepts("do-sort", "Optional: Set the flag (true or false) to indicate if need to sort bam files. Default: false").withRequiredArg();
         parser.accepts("skip-missing-files","Optional. Set the flag for skipping non-existing files to true or false "
                 + "when running the workflow, the default is true").withRequiredArg();
+        parser.accepts("varscan-pvalue", "Optional: Set the threshold p-value for Varscan variant calls (0.05 is the default)").withRequiredArg();
+        parser.accepts("varscan-java-xmx", "Optional: Set the memory heap in Gigabytes for Varscan java").withRequiredArg();
         parser.accepts("verbose", "Optional: Enable verbose Logging").withRequiredArg();
     }
 
@@ -167,6 +173,14 @@ public class VarscanDecider extends OicrDecider {
         // Warn about using force-run-all (may not be relevant after 1.0.17 release)
         if (options.has("force-run-all")) {
             Log.stderr("Using --force-run-all WILL BREAK THE LOGIC OF THIS DECIDER, USE AT YOUR OWN RISK");
+        }
+        
+        if (options.has("varscan-java-xmx")) {
+            this.varscanJavaXmx = options.valueOf("varscan-java-xmx").toString();
+        }
+        
+        if (options.has("varscan-pvalue")) {
+            this.varscanPvalueThreshold = options.valueOf("varscan-pvalue").toString();
         }
         
 
@@ -400,6 +414,12 @@ public class VarscanDecider extends OicrDecider {
         iniFileMap.put("force_crosscheck",  this.forceCrosscheck);
         iniFileMap.put("skip_missing_files", this.skipMissing);
         iniFileMap.put("do_sort", this.do_sort);
+        if (!this.varscanJavaXmx.isEmpty()) {
+            iniFileMap.put("varscan_java_xmx", this.varscanJavaXmx);
+        }
+        if (!this.varscanPvalueThreshold.isEmpty()) {
+            iniFileMap.put("varscan_pvalue", this.varscanPvalueThreshold);
+        }
         
         //Note that we can use group_id, group_description and external_name for tumor bams only
         if (null != groupIds && groupIds.length() != 0 && !groupIds.toString().contains("NA")) {

@@ -1,2 +1,2 @@
-## 1.0 - 2015-03-26
-- Initial implementation
+## 1.0 - 2017-08-16
+- Initial implementation as a stand-alone workflow

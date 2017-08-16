@@ -43,6 +43,8 @@ public class VarscanWorkflow extends OicrWorkflow {
     private String varscanMinRegion;
     private String varscanRecenterUp;
     private String varscanRecenterDown;
+    private String varscanPvalueThreshold;
+    private String varscanJavaXmx;
     
     //Data
     private String[] normal;
@@ -61,7 +63,9 @@ public class VarscanWorkflow extends OicrWorkflow {
     private static final String VARSCAN_PREFIX = "varscan_";
     private final static String WG             = "WG";
     private final static String EX             = "EX";
+    private final static String PVALUE         = "0.05";
     private static final boolean DEFAULT_SKIP_IF_MISSING = true;  // Conditional provisioning
+    private static final String VARSCAN_JAVA_MEM = "4";
    
     @Override
     public Map<String, SqwFile> setupFiles() {
@@ -73,6 +77,8 @@ public class VarscanWorkflow extends OicrWorkflow {
             this.templateType  = getProperty("template_type");
            
             String fileSkipFlag = this.getOptionalProperty("skip_missing_files", Boolean.toString(DEFAULT_SKIP_IF_MISSING));
+            this.varscanPvalueThreshold = this.getOptionalProperty("varscan_pvalue", PVALUE);
+            this.varscanJavaXmx = this.getOptionalProperty("varscan_java_xmx", VARSCAN_JAVA_MEM);
             this.skipFlag = Boolean.valueOf(fileSkipFlag);           
             this.queue = getProperty("queue");
             
@@ -87,6 +93,7 @@ public class VarscanWorkflow extends OicrWorkflow {
             //=====================Application Versions
             this.varscanVersion  = getProperty("varscan_version");
             this.samtoolsVersion = getProperty("samtools_version");
+            this.refFasta        = getProperty("reference_fasta");
             this.rModule         = getProperty("R_module");
             this.rLibDir         = RLIBDIR_BASE + getProperty("Rlibs_version");
             this.varscanMinCoverage = getOptionalProperty("varscan_min_coverage", null);
@@ -259,6 +266,8 @@ public class VarscanWorkflow extends OicrWorkflow {
                             + " --java "         + getWorkflowBaseDir() + "/bin/jre" + getProperty("jre-version") + "/bin/java"
                             + " --varscan "      + getWorkflowBaseDir() + "/bin/VarScan.v" + varscanVersion + ".jar"
                             + " --id "           + resultID
+                            + " --xmxmem "       + this.varscanJavaXmx
+                            + " --p-value "      + this.varscanPvalueThreshold
                             + " --samtools "     + getWorkflowBaseDir() + "/bin/samtools-" 
                                                  + this.samtoolsVersion + "/samtools");
         if (null != this.varscanMinCoverage) {
@@ -281,7 +290,7 @@ public class VarscanWorkflow extends OicrWorkflow {
             varscanJob.getCommand().addArgument(" --recenter-down "+ this.varscanRecenterDown);
         }
 
-        varscanJob.setMaxMemory("12000");
+        varscanJob.setMaxMemory("10000");
         if (parents != null) {
             for (Job p : parents) {
                 varscanJob.addParent(p);
