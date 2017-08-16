@@ -99,7 +99,7 @@ public class BicSeqDecider extends OicrDecider {
         this.templateTypeFilter = WG;
         if (this.options.has("template-type")) {
             if (!options.hasArgument("template-type")) {
-                Log.error("--template-type requires an argument, WG or EX");
+                Log.error("--template-type requires an argument");
                 rv.setExitStatus(ReturnValue.INVALIDARGUMENT);
                 return rv;
             } else {
