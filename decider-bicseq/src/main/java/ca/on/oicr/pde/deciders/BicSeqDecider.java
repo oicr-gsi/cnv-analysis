@@ -46,14 +46,12 @@ public class BicSeqDecider extends OicrDecider {
     private String rmodule         = "R/3.2.1-deb8";
     private String biqseqInterval  = "";
     private String biqseqSpread    = "";
+    private static final String BICSEQ_I_DEFAULT         = "150";
+    private static final String BICSEQ_S_DEFAULT         = "20";
 
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
-    private final static String EX           = "EX";
-    private String rsconfigXmlPath           = "/.mounts/labs/PDE/data/rsconfig.xml";
-    private Rsconfig rs;
     private String tumorType;
-    private String targetFile = " ";
     private List<String> duplicates;
     
     public BicSeqDecider() {
@@ -101,15 +99,17 @@ public class BicSeqDecider extends OicrDecider {
         this.templateTypeFilter = WG;
         if (this.options.has("template-type")) {
             if (!options.hasArgument("template-type")) {
-                Log.error("--template-type requires an argument, WG or EX");
+                Log.error("--template-type requires an argument");
                 rv.setExitStatus(ReturnValue.INVALIDARGUMENT);
                 return rv;
             } else {
                 this.templateTypeFilter = options.valueOf("template-type").toString();
-                if (!this.templateTypeFilter.equals(WG) && !this.templateTypeFilter.equals(EX)) {
-                    Log.stderr("NOTE THAT ONLY EX or WG template-type SUPPORTED, WE CANNOT GUARANTEE MEANINGFUL RESULTS WITH OTHER TEMPLATE TYPES");
+                if (!this.templateTypeFilter.equals(WG)) {
+                    Log.stderr("NOTE THAT ONLY WG template-type SUPPORTED");
+                    rv.setExitStatus(ReturnValue.INVALIDARGUMENT);
+                    return rv;
                 }
-                this.templateType       = this.templateTypeFilter;
+                this.templateType = this.templateTypeFilter;
             }
 	}
         
@@ -139,14 +139,13 @@ public class BicSeqDecider extends OicrDecider {
         
         if (this.options.has("biqseq-interval")) {
             this.biqseqInterval = options.valueOf("biqseq-interval").toString();
-            Log.debug("Setting BiqSeq interval, default is 150");
+            Log.debug("Setting BiqSeq interval, default is " + BICSEQ_I_DEFAULT);
 	}
         
         if (this.options.has("biqseq-spread")) {
             this.biqseqSpread = options.valueOf("biqseq-spread").toString();
-            Log.debug("Setting BiqSeq spread, default is 20");
-	}
-        
+            Log.debug("Setting BiqSeq spread, default is " + BICSEQ_S_DEFAULT);
+	}  
        
         if (this.options.has("verbose")) {
             Log.setVerbose(true);
@@ -172,29 +171,6 @@ public class BicSeqDecider extends OicrDecider {
         // Warn about using force-run-all (may not be relevant after 1.0.17 release)
         if (options.has("force-run-all")) {
             Log.stderr("Using --force-run-all WILL BREAK THE LOGIC OF THIS DECIDER, USE AT YOUR OWN RISK");
-        }
-        
-         if (options.has("rsconfig-file")) {
-            if (!options.hasArgument("rsconfig-file")) {
-                Log.error("--rsconfig-file requires a file argument.");
-                rv.setExitStatus(ReturnValue.INVALIDARGUMENT);
-                return rv;
-            }
-            if (!fileExistsAndIsAccessible(options.valueOf("rsconfig-file").toString())) {
-                Log.error("The rsconfig-file is not accessible.");
-                rv.setExitStatus(ReturnValue.FILENOTREADABLE);
-                return rv;
-            } else {
-                rsconfigXmlPath = options.valueOf("rsconfig-file").toString();
-            }
-        }
-
-        try {
-            rs = new Rsconfig(new File(rsconfigXmlPath));
-        } catch (Exception e) {
-            Log.error("Rsconfig file did not load properly, exeception stack trace:\n" + e.getStackTrace());
-            rv.setExitStatus(ReturnValue.FAILURE);
-            return rv;
         }
 
         return rv;
@@ -245,7 +221,6 @@ public class BicSeqDecider extends OicrDecider {
     protected boolean checkFileDetails(ReturnValue returnValue, FileMetadata fm) {
         Log.debug("CHECK FILE DETAILS:" + fm);
         String currentTtype    = returnValue.getAttribute(Header.SAMPLE_TAG_PREFIX.getTitle()        + "geo_library_source_template_type");
-        String targetResequencingType = returnValue.getAttribute(Header.SAMPLE_TAG_PREFIX.getTitle() + "geo_targeted_resequencing");
         String currentTissueType = returnValue.getAttribute(Header.SAMPLE_TAG_PREFIX.getTitle()      + "geo_tissue_type" );
 
         if (null == currentTissueType )
@@ -262,20 +237,7 @@ public class BicSeqDecider extends OicrDecider {
         if (this.templateType.isEmpty() || !this.templateType.equals(currentTtype)) {
             this.templateType = currentTtype;
         }
-        String target_bed = rs.get(currentTtype, targetResequencingType, "interval_file");
-
-        if (!currentTtype.equals(WG) && target_bed != null && !target_bed.isEmpty()) {
-            this.targetFile = target_bed;
-        } else if (!currentTtype.equals(WG) && (target_bed == null || target_bed.isEmpty())) {
-            
-            Log.error("For the file with SWID = [" + returnValue.getAttribute(Header.FILE_SWA.getTitle())
-                    + "], the template type/geo_library_source_template_type = [" + currentTtype
-                    + "] and resequencing type/geo_targeted_resequencing = [" + targetResequencingType
-                    + "] could not be found in rsconfig.xml (path = [" + rsconfigXmlPath + "])");
-            return false;
-            
-        }
-         
+                 
         for (FileMetadata fmeta : returnValue.getFiles()) {
             if (!fmeta.getMetaType().equals(BAM_METATYPE))
                 continue;
@@ -417,7 +379,6 @@ public class BicSeqDecider extends OicrDecider {
         iniFileMap.put("input_files_tumor",  inputTumrFiles.toString());
         iniFileMap.put("data_dir", "data");
         iniFileMap.put("template_type", this.templateType);
-        iniFileMap.put("target_file", this.targetFile);
  
 	iniFileMap.put("output_prefix",this.output_prefix);
 	iniFileMap.put("output_dir", this.output_dir);
@@ -438,19 +399,19 @@ public class BicSeqDecider extends OicrDecider {
         
         
         //Note that we can use group_id, group_description and external_name for tumor bams only
-        if (null != groupIds && groupIds.length() != 0 && !groupIds.toString().contains("NA")) {
+        if (groupIds.length() != 0 && !groupIds.toString().contains("NA")) {
           iniFileMap.put("group_id", groupIds.toString());
         } else {
           iniFileMap.put("group_id", "NA");    
         }
 
-        if (null != groupDescription && groupDescription.length() != 0 && !groupIds.toString().contains("NA")) {
+        if (groupDescription.length() != 0 && !groupIds.toString().contains("NA")) {
           iniFileMap.put("group_id_description", groupDescription.toString());
         } else {
           iniFileMap.put("group_id_description", "NA");    
         }
         
-        if (null != tubeId && tubeId.length() != 0 && !groupIds.toString().contains("NA")) {
+        if (tubeId.length() != 0 && !groupIds.toString().contains("NA")) {
           iniFileMap.put("external_name", tubeId.toString());
         } else {
           iniFileMap.put("external_name", "NA");    

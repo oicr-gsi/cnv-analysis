@@ -39,17 +39,6 @@
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>ca.on.oicr.pde</groupId>
-            <artifactId>common-utilities</artifactId>
-            <version>1.6.5</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.on.oicr.pde</groupId>
-            <artifactId>workflow-utilities</artifactId>
-            <version>1.7</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
 
     <build>

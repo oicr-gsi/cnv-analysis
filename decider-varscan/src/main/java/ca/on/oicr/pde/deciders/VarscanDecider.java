@@ -45,15 +45,23 @@ public class VarscanDecider extends OicrDecider {
     private String forceCrosscheck = "true";
     private String do_sort         = "false";
     private String rmodule         = "R/3.2.1-deb8";
+    private String varscanPvalueThreshold;
+    private String varscanJavaXmx;
+    
+    //Additional Parameters for VarScan:
+    private String varscanMinCoverage;
+    private String varscanDelCoverage;
+    private String varscanMinRegion;
+    private String varscanRecenterUp;
+    private String varscanRecenterDown;
 
     private final static String BAM_METATYPE = "application/bam";
     private final static String WG           = "WG";
     private final static String EX           = "EX";
-    private String rsconfigXmlPath           = "/.mounts/labs/PDE/data/rsconfig.xml";
-    private Rsconfig rs;
     private String tumorType;
-    private String targetFile = " ";
     private List<String> duplicates;
+    private final static String PVALUE         = "0.05";
+    private static final String VARSCAN_JAVA_MEM = "4";
     
     public VarscanDecider() {
         super();
@@ -70,11 +78,18 @@ public class VarscanDecider extends OicrDecider {
                 + "after analysis. Corresponds to output-prefix in INI file. Default: ./").withRequiredArg();
         parser.accepts("output-folder", "Optional: the name of the folder to put the output into relative to "
 	        + "the output-path. Corresponds to output-dir in INI file. Default: seqware-results").withRequiredArg();
+        parser.accepts("varscan-min-coverage","Optional. VarScan filtering parameter, see Varscan Manual").withRequiredArg();
+        parser.accepts("varscan-del-coverage","Optional. VarScan filtering parameter, see Varscan Manual").withRequiredArg();
+        parser.accepts("varscan-min-region","Optional. VarScan filtering parameter, see Varscan Manual").withRequiredArg();
+        parser.accepts("varscan-recenter-up","Optional. VarScan filtering parameter, see Varscan Manual").withRequiredArg();
+        parser.accepts("varscan-recenter-down","Optional. VarScan filtering parameter, see Varscan Manual").withRequiredArg();
         parser.accepts("queue", "Optional: Set the queue (Default: not set)").withRequiredArg();
         parser.accepts("tumor-type", "Optional: Set tumor tissue type to something other than primary tumor (P), i.e. X . Default: Not set (All)").withRequiredArg();
         parser.accepts("do-sort", "Optional: Set the flag (true or false) to indicate if need to sort bam files. Default: false").withRequiredArg();
         parser.accepts("skip-missing-files","Optional. Set the flag for skipping non-existing files to true or false "
                 + "when running the workflow, the default is true").withRequiredArg();
+        parser.accepts("varscan-pvalue", "Optional: Set the threshold p-value for Varscan variant calls (0.05 is the default)").withRequiredArg();
+        parser.accepts("varscan-java-xmx", "Optional: Set the memory heap in Gigabytes for Varscan java").withRequiredArg();
         parser.accepts("verbose", "Optional: Enable verbose Logging").withRequiredArg();
     }
 
@@ -172,29 +187,38 @@ public class VarscanDecider extends OicrDecider {
             Log.stderr("Using --force-run-all WILL BREAK THE LOGIC OF THIS DECIDER, USE AT YOUR OWN RISK");
         }
         
-         if (options.has("rsconfig-file")) {
-            if (!options.hasArgument("rsconfig-file")) {
-                Log.error("--rsconfig-file requires a file argument.");
-                rv.setExitStatus(ReturnValue.INVALIDARGUMENT);
-                return rv;
-            }
-            if (!fileExistsAndIsAccessible(options.valueOf("rsconfig-file").toString())) {
-                Log.error("The rsconfig-file is not accessible.");
-                rv.setExitStatus(ReturnValue.FILENOTREADABLE);
-                return rv;
-            } else {
-                rsconfigXmlPath = options.valueOf("rsconfig-file").toString();
-            }
+        if (options.has("varscan-java-xmx")) {
+            this.varscanJavaXmx = options.valueOf("varscan-java-xmx").toString();
+        } else {
+            this.varscanJavaXmx = VARSCAN_JAVA_MEM;
         }
-
-        try {
-            rs = new Rsconfig(new File(rsconfigXmlPath));
-        } catch (Exception e) {
-            Log.error("Rsconfig file did not load properly, exeception stack trace:\n" + e.getStackTrace());
-            rv.setExitStatus(ReturnValue.FAILURE);
-            return rv;
+        
+        if (options.has("varscan-pvalue")) {
+            this.varscanPvalueThreshold = options.valueOf("varscan-pvalue").toString();
+        } else {
+            this.varscanPvalueThreshold = PVALUE;
         }
-
+               
+        if (options.has("varscan-min-coverage")) {
+            this.varscanMinCoverage = options.valueOf("varscan-min-coverage").toString();
+        }
+        
+        if (options.has("varscan-del-coverage")) {
+            this.varscanDelCoverage = options.valueOf("varscan-del-coverage").toString();
+        }
+        
+        if (options.has("varscan-min-region")) {
+            this.varscanMinRegion = options.valueOf("varscan-min-region").toString();
+        }
+        
+        if (options.has("varscan-recenter-up")) {
+            this.varscanRecenterUp = options.valueOf("varscan-recenter-up").toString();
+        }
+        
+        if (options.has("varscan-recenter-down")) {
+            this.varscanRecenterDown = options.valueOf("varscan-recenter-down").toString();
+        }
+        
         return rv;
     }
 
@@ -264,19 +288,6 @@ public class VarscanDecider extends OicrDecider {
         
         if (this.templateType.isEmpty() || !this.templateType.equals(currentTtype)) {
             this.templateType = currentTtype;
-        }
-        String target_bed = rs.get(currentTtype, targetResequencingType, "interval_file");
-
-        if (!currentTtype.equals(WG) && target_bed != null && !target_bed.isEmpty()) {
-            this.targetFile = target_bed;
-        } else if (!currentTtype.equals(WG) && (target_bed == null || target_bed.isEmpty())) {
-            
-            Log.error("For the file with SWID = [" + returnValue.getAttribute(Header.FILE_SWA.getTitle())
-                    + "], the template type/geo_library_source_template_type = [" + currentTtype
-                    + "] and resequencing type/geo_targeted_resequencing = [" + targetResequencingType
-                    + "] could not be found in rsconfig.xml (path = [" + rsconfigXmlPath + "])");
-            return false;
-            
         }
          
         for (FileMetadata fmeta : returnValue.getFiles()) {
@@ -424,7 +435,6 @@ public class VarscanDecider extends OicrDecider {
         iniFileMap.put("input_files_tumor",  inputTumrFiles.toString());
         iniFileMap.put("data_dir", "data");
         iniFileMap.put("template_type", this.templateType);
-        iniFileMap.put("target_file", this.targetFile);
  
 	iniFileMap.put("output_prefix",this.output_prefix);
 	iniFileMap.put("output_dir", this.output_dir);
@@ -439,6 +449,27 @@ public class VarscanDecider extends OicrDecider {
         iniFileMap.put("force_crosscheck",  this.forceCrosscheck);
         iniFileMap.put("skip_missing_files", this.skipMissing);
         iniFileMap.put("do_sort", this.do_sort);
+        if (!this.varscanJavaXmx.isEmpty()) {
+            iniFileMap.put("varscan_java_xmx", this.varscanJavaXmx);
+        }
+        if (!this.varscanPvalueThreshold.isEmpty()) {
+            iniFileMap.put("varscan_pvalue", this.varscanPvalueThreshold);
+        }
+        if (!this.varscanMinCoverage.isEmpty()) {
+            iniFileMap.put("varscan_min_coverage", this.varscanMinCoverage);
+        }
+        if (!this.varscanDelCoverage.isEmpty()) {
+            iniFileMap.put("varscan_del_coverage", this.varscanDelCoverage);
+        }
+        if (!this.varscanMinRegion.isEmpty()) {
+            iniFileMap.put("varscan_min_region", this.varscanMinRegion);
+        }
+        if (!this.varscanRecenterUp.isEmpty()) {
+            iniFileMap.put("varscan_recenter_up", this.varscanRecenterUp);
+        }
+        if (!this.varscanRecenterDown.isEmpty()) {
+            iniFileMap.put("varscan_recenter_down", this.varscanRecenterDown);
+        }
         
         //Note that we can use group_id, group_description and external_name for tumor bams only
         if (null != groupIds && groupIds.length() != 0 && !groupIds.toString().contains("NA")) {
