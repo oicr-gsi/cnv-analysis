@@ -189,10 +189,14 @@ public class VarscanDecider extends OicrDecider {
         
         if (options.has("varscan-java-xmx")) {
             this.varscanJavaXmx = options.valueOf("varscan-java-xmx").toString();
+        } else {
+            this.varscanJavaXmx = VARSCAN_JAVA_MEM;
         }
         
         if (options.has("varscan-pvalue")) {
             this.varscanPvalueThreshold = options.valueOf("varscan-pvalue").toString();
+        } else {
+            this.varscanPvalueThreshold = PVALUE;
         }
                
         if (options.has("varscan-min-coverage")) {
