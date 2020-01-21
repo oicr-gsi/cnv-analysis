@@ -92,7 +92,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  python<<CODE
  import os
  general_lines = []
