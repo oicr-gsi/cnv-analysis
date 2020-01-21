@@ -43,7 +43,7 @@ input {
   String? sampleID = "TEST"
   File? inputNormal
   File? intervalFile
-  String? chrFiles = "$HG19_ROOT/" #TODO
+  String? chrFiles = "$HG19_ROOT/"
   String? chrLenFile = "$HG19_ROOT/hg19_random.fa.fai"
   String? bedGraphOutput = "TRUE"
   Float?  coefficientOfVariation = 0.05
@@ -70,7 +70,7 @@ parameter_meta {
  sequencingType: "One of WG, EX or TS"
  sampleID: "This is used as a prefix for output files"
  intervalFile: "Optional interval .bed file, for targeted sequencing like EX, TS"
- chrFiles: "Directory with chromosome-specific .fa files" #TODO
+ chrFiles: "Directory with chromosome-specific .fa files"
  chrLenFile: "Path to .fai file, needed for chromosome sizes"
  bedGraphOutput: "String that says TRUE or FALSE, determines if we need BedGraph output or not"
  coefficientOfVariation: "Parameter for CNV calling, default is 0.05"
