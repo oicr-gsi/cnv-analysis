@@ -28,6 +28,7 @@
         "wdl_inputs": {
           "freec.outputFileNamePrefix": "TEST_PCSI_1106",
           "freec.inputTumor": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/42002730/SWID_14950765_PCSI_1106_Pa_P_PE_625_WG_5270_190819_A00827_0025_BHKC7JDSXX_AAGTTATC-AATAGCAA_L004_001.annotated.bam",
+          "freec.inputNormal": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/11510526/SWID_14950709_PCSI_1106_Ly_R_PE_619_WG_190819_A00827_0025_BHKC7JDSXX_TGACTACT-CCTTACAG_L002_001.annotated.bam",
           "freec.sequencingType": "WG"
           }
       }  
