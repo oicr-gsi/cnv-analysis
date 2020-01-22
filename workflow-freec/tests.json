@@ -18,19 +18,16 @@
         "wdl_inputs": {
           "freec.outputFileNamePrefix": "TEST_PCSI_1106_NC",
           "freec.inputTumor": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/42002730/SWID_14950765_PCSI_1106_Pa_P_PE_625_WG_5270_190819_A00827_0025_BHKC7JDSXX_AAGTTATC-AATAGCAA_L004_001.annotated.bam",
-          "freec.runFreec.chrFiles": "/.mounts/labs/gsi/testdata/hg19_random/",
           "freec.sequencingType": "WG"
           }
       }
     },
     {
-      "id": "TEST_NoControl",
+      "id": "TEST_Control",
       "parameters": {
         "wdl_inputs": {
           "freec.outputFileNamePrefix": "TEST_PCSI_1106",
-          "freec.outputFileNamePrefix": "TESTING",
           "freec.inputTumor": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/42002730/SWID_14950765_PCSI_1106_Pa_P_PE_625_WG_5270_190819_A00827_0025_BHKC7JDSXX_AAGTTATC-AATAGCAA_L004_001.annotated.bam",
-          "freec.runFreec.chrFiles": "/.mounts/labs/gsi/testdata/hg19_random/",
           "freec.sequencingType": "WG"
           }
       }  
