@@ -60,7 +60,7 @@ input {
   String? configFile = "config_freec.conf"
   String? logPath = "freec_run.log"
   String? modules = "freec/11.5 bedtools/2.27 samtools/0.1.19 hg19/p13"
-  Int     timeout = 20
+  Int     timeout = 72
 
 }
 
@@ -164,8 +164,8 @@ command <<<
  mv ~{basename(inputTumor)}_ratio.txt ~{sampleID}_ratio.txt
  mv ~{basename(inputTumor)}_sample.cpn ~{sampleID}_sample.cpn
 
- if [[ -f "~{basename(inputNormal)}_control.cpn" ]]; then
-    mv ~{basename(inputNormal)}_control.cpn ~{sampleID}_control.cpn
+ if [[ -f ~{basename(inputNormal + "")}"_control.cpn" ]]; then
+    mv ~{basename(inputNormal + "")}_control.cpn ~{sampleID}_control.cpn
  fi
 
  if [[ -f "~{basename(inputTumor)}_GC_profile.cpn" ]]; then
@@ -184,12 +184,12 @@ runtime {
 }
 
 output {
-  File infoFile   = "~{sampleID}_info.txt"
+  File infoFile = "~{sampleID}_info.txt"
   File regionFile = "~{sampleID}_CNVs"
-  File ratioFile  = "~{sampleID}_ratio.txt"
-  File cnvTumor   = "~{sampleID}_sample.cpn"
+  File ratioFile = "~{sampleID}_ratio.txt"
+  File cnvTumor = "~{sampleID}_sample.cpn"
   File? cnvNormal = "~{sampleID}_control.cpn"
-  File? gcProfile  = "~{sampleID}_GC_profile.cpn"
+  File? gcProfile = "~{sampleID}_GC_profile.cpn"
   File? ratioBedGraph = "~{sampleID}_ratio.BedGraph"
 }
 }
