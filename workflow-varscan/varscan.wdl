@@ -114,7 +114,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  python<<CODE
  import os
  import re
@@ -195,7 +194,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  python<<CODE
  import os
  varscan = os.path.expandvars("~{varScan}")
