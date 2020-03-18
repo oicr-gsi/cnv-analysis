@@ -33,8 +33,6 @@ meta {
 }
 
 output {
- File logCNV              = runVarscanCNV.logFile
- File logSNV              = runVarscanCNV.logFile
  File? resultCnvFile      = smoothData.filteredData
  File? resultSnpFile      = getSnvNative.snpFile
  File? resultIndelFile    = getSnvNative.indelFile
@@ -68,7 +66,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  ~{samtools} mpileup -q 1 -f ~{refFasta} ~{inputNormal} ~{inputTumor} | awk -F "\t" '$4 > 0 && $7 > 0' > normtumor_sorted.pileup 
 >>>
 
@@ -132,7 +129,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  unset _JAVA_OPTIONS
  python<<CODE
  import os
@@ -197,7 +193,6 @@ runtime {
 }
 
 output {
-  File logFile    = "~{logFile}"
   File? snpFile   = "~{sampleID}.snp"
   File? indelFile = "~{sampleID}.indel"
   File? snpVcfFile = "~{sampleID}.snp.vcf"
@@ -234,7 +229,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  unset _JAVA_OPTIONS
  python<<CODE
  import os
@@ -278,7 +272,6 @@ runtime {
 }
 
 output {
-  File logFile   = "~{logFile}"
   File? resultFile = "~{sampleID}.copynumber"
 }
 }
@@ -319,7 +312,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  python<<CODE
  import os
  varscan = os.path.expandvars("~{varScan}")
