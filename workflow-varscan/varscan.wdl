@@ -115,7 +115,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  ~{samtools} mpileup -q 1 -r ~{region} -f ~{refFasta} ~{inputNormal} ~{inputTumor} | awk -F "\t" '$4 > 0 && $7 > 0' > normtumor_sorted.pileup 
 >>>
 
@@ -201,7 +200,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  unset _JAVA_OPTIONS
  python<<CODE
  import os
@@ -303,7 +301,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  unset _JAVA_OPTIONS
  python<<CODE
  import os
@@ -388,7 +385,6 @@ parameter_meta {
 }
 
 command <<<
- module load ~{modules} 2>/dev/null
  python<<CODE
  import os
  varscan = os.path.expandvars("~{varScan}")
