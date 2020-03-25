@@ -45,8 +45,6 @@ meta {
 }
 
 output {
- File logCNV              = runVarscanCNV.logFile
- File logSNV              = runVarscanCNV.logFile
  File? resultCnvFile      = smoothData.filteredData
  File? resultSnpFile      = getSnvNative.snpFile
  File? resultIndelFile    = getSnvNative.indelFile
@@ -264,7 +262,6 @@ runtime {
 }
 
 output {
-  File logFile    = "~{logFile}"
   File? snpFile   = "~{sampleID}.snp"
   File? indelFile = "~{sampleID}.indel"
   File? snpVcfFile = "~{sampleID}.snp.vcf"
@@ -344,7 +341,6 @@ runtime {
 }
 
 output {
-  File logFile   = "~{logFile}"
   File? resultFile = "~{sampleID}.copynumber"
 }
 }
