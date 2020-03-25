@@ -37,11 +37,11 @@ Pipeline is run as a series of steps implemented as a wdl workflow:
 Paramter|Value
 ---|---
 bedIntervalsPath | String (optional, default = "". If not set, varscan will use chromRegions)
-chromRegions | Array[String] (varscan will use this if no .bed file provided chr1:1-249250621, chr2:1-243199373 etc.)
-smoothData.amp_threshold | String? (optional, default = "0")
-smoothData.varScan | String? (optional, default = "$VARSCAN_ROOT/VarScan")
-smoothData.modules | String? (optional, default = "varscan/2.1.12")
-smoothData.del_threshold | String? (optional, default = "0")
+chromRegions | Array[String] (will be used if no .bed file provided. default: chr1:1-249250621, chr2:1-243199373 etc.)
+smoothData.amp_threshold | String? (optional, default = "0.25")
+smoothData.varScan | String? (optional, default = "$VARSCAN_ROOT/VarScan.jar")
+smoothData.modules | String? (optional, default = "varscan/2.4.2 java/8 rstats/3.6")
+smoothData.del_threshold | String? (optional, default = "0.25")
 smoothData.jobMemory | Int? (optional, default = 16)
 smoothData.min_coverage | String? (optional, default = "20")
 smoothData.recenter_down | String? (optional, default = "0")
@@ -73,10 +73,10 @@ getSnv.pValue | Float? (optional, default = 0.05)
 getSnv.varScan | String? (optional, default = "$VARSCAN_ROOT/VarScan.jar")
 getSnv.minCoverage | Int? (optional, default = 8)
 getSnv.validation | Int (optional, default = 0)
-getSnv.minVarFreq | Float? (optional, default = 0
-getSnv.normalPurity | Float? (optional, default = 1
+getSnv.minVarFreq | Float? (optional, default = 0.1)
+getSnv.normalPurity | Float? (optional, default = 1.0)
 getSnv.jobMemory | Int? (optional, default = 20)
-getSnv.logFile | String? (optional, default = "VARSCAN_SNV
+getSnv.logFile | String? (optional, default = "VARSCAN_SNV.log")
 getSnv.pValueHet | Float? (optional, default = 0.99)
 getSnv.tumorPurity | Float? (optional, default = 1.0)
 
