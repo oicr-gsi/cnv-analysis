@@ -5,19 +5,31 @@ input {
     # Normally we need only tumor bam, normal bam may be used when available
     File inputTumor
     File inputNormal
+    File inputTumorIndex
+    File inputNormalIndex
     String? outputFileNamePrefix = ""
+    String bedIntervalsPath = ""
+    Array[String] chromRegions = ["chr1:1-249250621","chr2:1-243199373","chr3:1-198022430","chr4:1-191154276","chr5:1-180915260","chr6:1-171115067","chr7:1-159138663","chr8:1-146364022","chr9:1-141213431","chr10:1-135534747","chr11:1-135006516","chr12:1-133851895","chr13:1-115169878","chr14:1-107349540","chr15:1-102531392","chr16:1-90354753","chr17:1-81195210","chr18:1-78077248","chr19:1-59128983","chr20:1-63025520","chr21:1-48129895","chr22:1-51304566","chrX:1-155270560","chrY:1-59373566","chrM:1-16571"]
 }
 
+call expandRegions { input: bedPath = bedIntervalsPath }
+
 String? sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
+Array[String] splitRegions = if bedIntervalsPath != "" then expandRegions.regions else chromRegions
 
 # Produce pileups
-call makePileups { input: inputTumor = inputTumor, inputNormal = inputNormal }
+scatter ( r in splitRegions )   {
+  call makePileups { input: inputTumor = inputTumor, inputTumorIndex = inputTumorIndex, inputNormal = inputNormal, inputNormalIndex = inputNormalIndex, region = r }
+}
+
+# Concat and provision merged mplileup
+call concatMpileup { input: filePaths = makePileups.pileup }
 
 # Configure and run Varscan
-call runVarscanCNV { input: inputPileup = makePileups.pileup, sampleID = sampleID }
+call runVarscanCNV { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID }
 
-call runVarscanSNV as getSnvNative { input: inputPileup = makePileups.pileup, sampleID = sampleID }
-call runVarscanSNV as getSnvVcf { input: inputPileup = makePileups.pileup, sampleID = sampleID, outputVcf = 1 }
+call runVarscanSNV as getSnvNative { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID }
+call runVarscanSNV as getSnvVcf { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID, outputVcf = 1 }
 
 # Run post-processing job if we have results from runVarscanCNV
 Array[File] cNumberFile = select_all([runVarscanCNV.resultFile])
@@ -33,6 +45,8 @@ meta {
 }
 
 output {
+ File logCNV              = runVarscanCNV.logFile
+ File logSNV              = runVarscanCNV.logFile
  File? resultCnvFile      = smoothData.filteredData
  File? resultSnpFile      = getSnvNative.snpFile
  File? resultIndelFile    = getSnvNative.indelFile
@@ -42,6 +56,38 @@ output {
 
 }
 
+# =======================================================
+# Read bed file, return a string with regions for mpileup
+# =======================================================
+task expandRegions {
+input {
+ File bedPath
+ Int jobMemory = 4
+}
+
+command <<<
+ python <<CODE
+ import os
+ if os.path.exists("~{bedPath}"):
+    with open("~{bedPath}") as f:
+        for line in f:
+           line = line.rstrip()
+           tmp = line.split("\t")
+           r = " " + tmp[0] + ":" + tmp[1] + "-" + tmp[2]
+           print(r)
+    f.close()
+ CODE
+>>>
+
+runtime {
+ memory:  "~{jobMemory} GB"
+}
+
+output {
+ Array[String] regions = read_lines(stdout()) 
+}
+}
+
 # ==========================================
 #  produce pileup with samtools
 # ==========================================
@@ -49,9 +95,12 @@ task makePileups {
 input {
  File inputNormal
  File inputTumor
+ File inputTumorIndex
+ File inputNormalIndex
  String? refFasta = "$HG19_ROOT/hg19_random.fa"
  String? modules  = "samtools/0.1.19 hg19/p13"
  String? samtools = "$SAMTOOLS_ROOT/bin/samtools"
+ String region 
  Int? jobMemory   = 18
  Int timeout      = 20
 }
@@ -66,7 +115,8 @@ parameter_meta {
 }
 
 command <<<
- ~{samtools} mpileup -q 1 -f ~{refFasta} ~{inputNormal} ~{inputTumor} | awk -F "\t" '$4 > 0 && $7 > 0' > normtumor_sorted.pileup 
+ module load ~{modules} 2>/dev/null
+ ~{samtools} mpileup -q 1 -r ~{region} -f ~{refFasta} ~{inputNormal} ~{inputTumor} | awk -F "\t" '$4 > 0 && $7 > 0' > normtumor_sorted.pileup 
 >>>
 
 runtime {
@@ -77,6 +127,28 @@ runtime {
 
 output {
  File pileup = "normtumor_sorted.pileup"
+}
+}
+
+#=============================================================
+# Task for concatenating mplileups
+#=============================================================
+task concatMpileup {
+input {
+ Array[File] filePaths
+ Int jobMemory = 10
+}
+
+command <<<
+ cat ~{sep=' ' filePaths} > normtumor_sorted.pileup
+>>>
+
+runtime {
+ memory: "~{jobMemory} GB"
+}
+
+output {
+  File mergedPileup = "normtumor_sorted.pileup"
 }
 }
 
@@ -129,6 +201,7 @@ parameter_meta {
 }
 
 command <<<
+ module load ~{modules} 2>/dev/null
  unset _JAVA_OPTIONS
  python<<CODE
  import os
@@ -193,6 +266,7 @@ runtime {
 }
 
 output {
+  File logFile    = "~{logFile}"
   File? snpFile   = "~{sampleID}.snp"
   File? indelFile = "~{sampleID}.indel"
   File? snpVcfFile = "~{sampleID}.snp.vcf"
@@ -229,6 +303,7 @@ parameter_meta {
 }
 
 command <<<
+ module load ~{modules} 2>/dev/null
  unset _JAVA_OPTIONS
  python<<CODE
  import os
@@ -272,6 +347,7 @@ runtime {
 }
 
 output {
+  File logFile   = "~{logFile}"
   File? resultFile = "~{sampleID}.copynumber"
 }
 }
@@ -312,6 +388,7 @@ parameter_meta {
 }
 
 command <<<
+ module load ~{modules} 2>/dev/null
  python<<CODE
  import os
  varscan = os.path.expandvars("~{varScan}")
@@ -348,3 +425,4 @@ output {
 }
 
 }
+
