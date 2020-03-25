@@ -27,7 +27,6 @@ call concatMpileup { input: filePaths = makePileups.pileup }
 
 # Configure and run Varscan
 call runVarscanCNV { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID }
-
 call runVarscanSNV as getSnvNative { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID }
 call runVarscanSNV as getSnvVcf { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID, outputVcf = 1 }
 
@@ -59,8 +58,13 @@ output {
 # =======================================================
 task expandRegions {
 input {
- File bedPath
+ String bedPath = ""
  Int jobMemory = 4
+}
+
+parameter_meta {
+  bedPath: "Optional path to a bed file with intervals"
+  jobMemory: "Memory for this task in GB"
 }
 
 command <<<
@@ -105,9 +109,13 @@ input {
 
 parameter_meta {
   inputNormal: "input .bam file for normal tissue"
+  inputNormalIndex: ".bai index file for normal tissue"
   inputTumor: "input .bam file for tumor tissue"
+  inputTumorIndex: ".bai index file for tumor tissue"
   refFasta: "Reference fasta file, path depends on the respective module"
   modules: "required modules"
+  samtools: "path to samtools"
+  region: "Region in a form of chrX:12000-12500 for mpileup command"
   jobMemory: "memory for this job, in Gb"
   timeout: "Timeout in hours, needed to override imposed limits"
 }
@@ -134,6 +142,11 @@ task concatMpileup {
 input {
  Array[File] filePaths
  Int jobMemory = 10
+}
+
+parameter_meta {
+  filePaths: "Array of pileup files to concatenate"
+  jobMemory: "memory in GB for this job"
 }
 
 command <<<
