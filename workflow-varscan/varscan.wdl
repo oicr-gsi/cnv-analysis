@@ -103,7 +103,7 @@ input {
  String? modules  = "samtools/0.1.19 hg19/p13"
  String? samtools = "$SAMTOOLS_ROOT/bin/samtools"
  String region 
- Int? jobMemory   = 18
+ Int jobMemory   = 18
  Int timeout      = 20
 }
 
@@ -169,20 +169,20 @@ task runVarscanSNV {
 input {
   File inputPileup
   String? sampleID ="VARSCAN"
-  Float? pValue = 0.05
-  Int? jobMemory  = 20
-  Int? javaMemory = 6
-  Int? minCoverage       = 8
-  Int? minCoverageNormal = 8
-  Int? minCoverageTumor  = 6
-  Float? minVarFreq        = 0.1
-  Float? minFreqForHom     = 0.75
-  Float? normalPurity      = 1.0
-  Float? tumorPurity       = 1.0
-  Float? pValueHet         = 0.99
+  Float pValue = 0.05
+  Int jobMemory  = 20
+  Int javaMemory = 6
+  Int minCoverage       = 8
+  Int minCoverageNormal = 8
+  Int minCoverageTumor  = 6
+  Float minVarFreq        = 0.1
+  Float minFreqForHom     = 0.75
+  Float normalPurity      = 1.0
+  Float tumorPurity       = 1.0
+  Float pValueHet         = 0.99
   Int strandFilter         = 0
   Int validation           = 0
-  Int? outputVcf           = 0
+  Int outputVcf           = 0
   String? logFile          = "VARSCAN_SNV.log"
   String? varScan          = "$VARSCAN_ROOT/VarScan.jar"
   String? modules          = "varscan/2.4.2 java/8"
@@ -289,9 +289,9 @@ task runVarscanCNV {
 input {
   File inputPileup
   String? sampleID ="VARSCAN"
-  Float? pValue = 0.05
-  Int? jobMemory  = 20
-  Int? javaMemory = 6
+  Float pValue = 0.05
+  Int jobMemory  = 20
+  Int javaMemory = 6
   String? logFile = "VARSCAN_CNV.log"
   String? varScan = "$VARSCAN_ROOT/VarScan.jar"
   String? modules = "varscan/2.4.2 java/8"
@@ -369,17 +369,17 @@ input {
  File copyNumberFile
  String? varScan = "$VARSCAN_ROOT/VarScan.jar"
  String? modules = "varscan/2.4.2 java/8 rstats/3.6"
- String? min_coverage  = "20"
- String? max_homdel_coverage = "5"
- String? min_tumor_coverage = "10"
- String? del_threshold = "0.25"
- String? amp_threshold = "0.25"
- String? min_region_size = "10"
- String? recenter_up = "0"
- String? recenter_down = "0"
+ Int min_coverage  = 20
+ Int max_homdel_coverage = 5
+ Int min_tumor_coverage = 10
+ Float del_threshold = 0.25
+ Float amp_threshold = 0.25
+ Int min_region_size = 10
+ Int recenter_up = 0
+ Int recenter_down = 0
  String? sampleID ="VARSCAN"
- Int? jobMemory  = 16
- Int? javaMemory = 6
+ Int jobMemory  = 16
+ Int javaMemory = 6
 }
 
 parameter_meta {
