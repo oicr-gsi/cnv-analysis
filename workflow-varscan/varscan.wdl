@@ -213,6 +213,7 @@ parameter_meta {
 
 command <<<
  unset _JAVA_OPTIONS
+ set -euxo pipefail
  python<<CODE
  import os
  import re
@@ -316,11 +317,12 @@ parameter_meta {
 
 command <<<
  unset _JAVA_OPTIONS
+ set -euxo pipefail
  python<<CODE
  import os
  import re
  varscan = os.path.expandvars("~{varScan}")
- varscanCommand = "zcat ~{inputPileup} | java -Xmx~{javaMemory}G -jar " + varscan + " copynumber --output-file ~{sampleID}.copynumber -mpileup 1 --p-value ~{pValue}"
+ varscanCommand = "zcat ~{inputPileup} | java -Xmx~{javaMemory}G -jar " + varscan + " copynumber --output-file ~{sampleID} -mpileup 1 --p-value ~{pValue}"
  cvg = 0
  resultsOk = False
  f = open("~{logFile}", "w+")
