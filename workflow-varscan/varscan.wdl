@@ -121,7 +121,8 @@ parameter_meta {
 }
 
 command <<<
- ~{samtools} mpileup -q 1 -r ~{region} -f ~{refFasta} ~{inputNormal} ~{inputTumor} | awk -F "\t" '$4 > 0 && $7 > 0' > normtumor_sorted.pileup 
+ set -euxo pipefail
+ ~{samtools} mpileup -q 1 -r ~{region} -f ~{refFasta} ~{inputNormal} ~{inputTumor} | awk -F "\t" '$4 > 0 && $7 > 0' | gzip -c > normtumor_sorted.pileup.gz 
 >>>
 
 runtime {
@@ -131,7 +132,7 @@ runtime {
 }
 
 output {
- File pileup = "normtumor_sorted.pileup"
+ File pileup = "normtumor_sorted.pileup.gz"
 }
 }
 
@@ -150,7 +151,7 @@ parameter_meta {
 }
 
 command <<<
- cat ~{sep=' ' filePaths} > normtumor_sorted.pileup
+ zcat ~{sep=' ' filePaths} | gzip -c > normtumor_sorted.pileup.gz
 >>>
 
 runtime {
@@ -158,7 +159,7 @@ runtime {
 }
 
 output {
-  File mergedPileup = "normtumor_sorted.pileup"
+  File mergedPileup = "normtumor_sorted.pileup.gz"
 }
 }
 
@@ -212,11 +213,12 @@ parameter_meta {
 
 command <<<
  unset _JAVA_OPTIONS
+ set -euxo pipefail
  python<<CODE
  import os
  import re
  varscan = os.path.expandvars("~{varScan}")
- varscanCommand = "java -Xmx~{javaMemory}G -jar " + varscan + " somatic ~{inputPileup} ~{sampleID} -mpileup 1 --somatic-p-value ~{pValue}"
+ varscanCommand = "zcat ~{inputPileup} | java -Xmx~{javaMemory}G -jar " + varscan + " somatic -mpileup 1 --somatic-p-value ~{pValue}"
 
  if "~{minCoverageNormal}" != "8":
     varscanCommand += " --min-coverage-normal ~{minCoverageNormal}"
@@ -238,6 +240,9 @@ command <<<
     varscanCommand += " --validation 1"
  if "~{outputVcf}" != "0":
     varscanCommand += " --output-vcf 1"
+    varscanCommand += " --output-snp ~{sampleID}.snp.vcf --output-indel ~{sampleID}.indel.vcf"
+ else:
+    varscanCommand += " --output-snp ~{sampleID}.snp --output-indel ~{sampleID}.indel"
 
  cvg = ~{minCoverage}
  resultsOk = False
@@ -312,11 +317,12 @@ parameter_meta {
 
 command <<<
  unset _JAVA_OPTIONS
+ set -euxo pipefail
  python<<CODE
  import os
  import re
  varscan = os.path.expandvars("~{varScan}")
- varscanCommand = "java -Xmx~{javaMemory}G -jar " + varscan + " copynumber ~{inputPileup} ~{sampleID} -mpileup 1 --p-value ~{pValue}"
+ varscanCommand = "zcat ~{inputPileup} | java -Xmx~{javaMemory}G -jar " + varscan + " copynumber --output-file ~{sampleID} -mpileup 1 --p-value ~{pValue}"
  cvg = 0
  resultsOk = False
  f = open("~{logFile}", "w+")
