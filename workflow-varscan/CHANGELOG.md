@@ -1,3 +1,5 @@
+## 2.1.1 - 2020-04-06
+- Added timeout setting to mpileup concatenation step. 5 hr is not enough for some data
 ## 2.1 - 2020-04-02
 - Introduced compression of mpileup data to conserve disk space
 ## 2.0 - 2020-01-31
