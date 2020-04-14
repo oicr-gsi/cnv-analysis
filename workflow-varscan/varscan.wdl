@@ -104,7 +104,7 @@ input {
  String? samtools = "$SAMTOOLS_ROOT/bin/samtools"
  String region 
  Int jobMemory   = 18
- Int timeout      = 20
+ Int timeout     = 40
 }
 
 parameter_meta {
@@ -143,11 +143,13 @@ task concatMpileup {
 input {
  Array[File] filePaths
  Int jobMemory = 10
+ Int timeout   = 20
 }
 
 parameter_meta {
   filePaths: "Array of pileup files to concatenate"
   jobMemory: "memory in GB for this job"
+  timeout: "Timeout in hours, needed to override imposed limits"
 }
 
 command <<<
@@ -156,6 +158,7 @@ command <<<
 
 runtime {
  memory: "~{jobMemory} GB"
+ timeout: "~{timeout}"
 }
 
 output {
@@ -187,7 +190,7 @@ input {
   String? logFile          = "VARSCAN_SNV.log"
   String? varScan          = "$VARSCAN_ROOT/VarScan.jar"
   String? modules          = "varscan/2.4.2 java/8"
-  Int timeout              = 20
+  Int timeout              = 40
 }
 
 parameter_meta {
@@ -300,7 +303,7 @@ input {
   String? logFile = "VARSCAN_CNV.log"
   String? varScan = "$VARSCAN_ROOT/VarScan.jar"
   String? modules = "varscan/2.4.2 java/8"
-  Int timeout = 20
+  Int timeout = 40
 }
 
 parameter_meta {
