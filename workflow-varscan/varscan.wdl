@@ -7,14 +7,14 @@ input {
     File inputNormal
     File inputTumorIndex
     File inputNormalIndex
-    String? outputFileNamePrefix = ""
+    String outputFileNamePrefix = ""
     String bedIntervalsPath = ""
     Array[String] chromRegions = ["chr1:1-249250621","chr2:1-243199373","chr3:1-198022430","chr4:1-191154276","chr5:1-180915260","chr6:1-171115067","chr7:1-159138663","chr8:1-146364022","chr9:1-141213431","chr10:1-135534747","chr11:1-135006516","chr12:1-133851895","chr13:1-115169878","chr14:1-107349540","chr15:1-102531392","chr16:1-90354753","chr17:1-81195210","chr18:1-78077248","chr19:1-59128983","chr20:1-63025520","chr21:1-48129895","chr22:1-51304566","chrX:1-155270560","chrY:1-59373566","chrM:1-16571"]
 }
 
 call expandRegions { input: bedPath = bedIntervalsPath }
 
-String? sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
+String sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
 Array[String] splitRegions = if bedIntervalsPath != "" then expandRegions.regions else chromRegions
 
 # Produce pileups
@@ -40,7 +40,38 @@ if (length(cNumberFile) == 1) {
 meta {
   author: "Peter Ruzanov"
   email: "peter.ruzanov@oicr.on.ca"
-  description: "Varscan 2.0"
+  description: "Varscan 2.0, workflow for calling SNVs and CVs"
+  dependencies: [
+      {
+        name: "samtools/0.1.19",
+        url: "http://www.htslib.org/"
+      },
+      {
+        name: "varscan/2.4.2",
+        url: "http://www.htslib.org/"
+      },
+      {
+        name: "java/8",
+        url: "https://www.java.com/en/download/"
+      }
+    ]
+    output_meta: {
+      resultCnvFile: "File with copy number variants, native varscan format",
+      resultSnpFile: "File with SNVs, native varscan format",
+      resultIndelFile: "File with INDELs, native varscan format",
+      resultSnpVcfFile: "File with SNVs, vcf format",
+      resultIndelVcfFile: "File with INDELs, vcf format"
+    }
+}
+
+parameter_meta {
+  inputTumor: "tumor file"
+  inputNormal: "normal file"
+  inputTumorIndex: ".bai index for tumor file"
+  inputNormalIndex: ".bai index for normal file"
+  outputFileNamePrefix: "Optional prefix for result files"
+  bedIntervalsPath: "Optional path to a bed file with intervals"
+  chromRegions: "Comma-delimited list of chromosomal regions, by default canonical chromosomes for hg19"
 }
 
 output {
@@ -203,9 +234,11 @@ parameter_meta {
  minVarFreq: "Minimum variant frequency to call a heterozygote [0.10]"
  minFreqForHom: "Minimum frequency to call homozygote [0.75]"
  normalPurity: "Estimated purity (non-tumor content) of normal sample [1.00]"
+ tumorPurity: "Estimated purity of tumor sample [1.00]"
  pValueHet: "p-value threshold to call a heterozygote [0.99]"
  strandFilter: "If set to 1, removes variants with >90% strand bias"
  validation: "If set to 1, outputs all compared positions even if non-variant"
+ outputVcf: "Flag for choosing Vcf output, zero by default"
  jobMemory: "Memory in Gb for this job"
  javaMemory: "Memory in Gb for Java"
  logFile: "File for logging Varscan messages"
@@ -395,11 +428,17 @@ parameter_meta {
  copyNumberFile: "Output from Varscan"
  varScan: "Path to VarScan jar file"
  modules: "Modules for this job"
- min_coverage: "Fine-tuning parameter for VarScan"
- del_threshold: "Fine-tuning parameter for VarScan"
- min_region_size: "Fine-tuning parameter for VarScan"
+ min_coverage: "Minimal coverage to consider when calling variants"
+ max_homdel_coverage: "Max coverage for homozygous deletions"
+ min_tumor_coverage: "Minimum tumor coverage"
+ del_threshold: "Threshold for deletion events"
+ amp_threshold: "Threshold for ampification events"
+ min_region_size: "Minimum region size of an event"
  recenter_up: "Fine-tuning parameter for VarScan"
  recenter_down: "Fine-tuning parameter for VarScan"
+ sampleID: "optional sample ID prefix"
+ jobMemory: "job memory, in GB"
+ javaMemory: "Memory allocated for java Heap"
 }
 
 command <<<
