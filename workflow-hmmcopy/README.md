@@ -56,7 +56,7 @@ Parameter|Value|Default|Description
 `tumorConvert.timeout`|Int|20|Timeout in hours, needed to override imposed limits
 `runHMMcopy.modules`|String|"hg19-hmmcopy/1.0 hmmcopy/1.28.1 hmmcopy-scripts/1.0 rstats-cairo/3.6"|list of data/software modules needed for the task
 `runHMMcopy.rScript`|String|"$RSTATS_CAIRO_ROOT/bin/Rscript"|Path to Rscript
-`runHMMcopy.hmmcopyScript`|String|"/u/pruzanov/Projects/GSI/WDL/HMMcopy/run_HMMcopy.r"|Path to .R script that runs HMMcopy pipeline
+`runHMMcopy.hmmcopyScript`|String|"$HMMCOPY_SCRIPTS_ROOT/run_HMMcopy.r"|Path to .R script that runs HMMcopy pipeline
 `runHMMcopy.jobMemory`|Int|8|memory in GB for this job
 `runHMMcopy.timeout`|Int|20|Timeout in hours, needed to override imposed limits
 
