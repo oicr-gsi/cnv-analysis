@@ -4,10 +4,10 @@ workflow hmmcopy {
 input {
   File inputTumor
   File inputNormal
-  String? outputFileNamePrefix = ""
+  String outputFileNamePrefix = ""
 }
 
-String? sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
+String sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
 
 call convertHMMcopy as normalConvert{ input: inputFile = inputNormal }
 call convertHMMcopy as tumorConvert{ input: inputFile = inputTumor }
@@ -37,6 +37,12 @@ meta {
       resultTsvFile: ".tsv file with all calls produced by HMMcopy",
       zippedPlots: "zipped plots in .png format"
     }
+}
+
+parameter_meta {
+  inputTumor: "input .bam file for tumor sample"
+  inputNormal: "input .bam file for normal sample"
+  outputFileNamePrefix: "Output file(s) prefix"
 }
 
 output {
