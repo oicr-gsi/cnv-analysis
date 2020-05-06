@@ -30,7 +30,7 @@ meta {
       {
         name: "rstats-cairo/3.6",
         url: "http://cran.utstat.utoronto.ca/src/base/R-3/R-3.6.1.tar.gz"
-      },
+      }
     ]
     output_meta: {
       resultiSegFile: ".seg file produced with HMMcopy",
