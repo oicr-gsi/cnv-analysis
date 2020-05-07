@@ -101,10 +101,10 @@ task runHMMcopy {
 input {
   File tumorWig
   File normalWig
-  String modules  = "hg19-hmmcopy/1.0 hmmcopy/1.28.1 hmmcopy-scripts/1.0 rstats-cairo/3.6"
+  String modules
   String rScript  = "$RSTATS_CAIRO_ROOT/bin/Rscript"
   String hmmcopyScript = "$HMMCOPY_SCRIPTS_ROOT/run_HMMcopy.r"
-  String outputPrefix = "TEST"
+  String outputPrefix
   String cgFile
   String mapFile
   Int jobMemory = 8

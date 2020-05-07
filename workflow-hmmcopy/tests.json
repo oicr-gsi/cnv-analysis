@@ -19,6 +19,7 @@
           "hmmcopy.inputNormal": "/.mounts/labs/gsi/testdata/hmmcopy/normal_sorted.bam",
           "hmmcopy.outputFileNamePrefix": "TESTRUN",
           "hmmcopy.inputTumor": "/.mounts/labs/gsi/testdata/hmmcopy/tumor_sorted.bam",
+          "hmmcopy.runHMMcopy.modules": "hg19-hmmcopy/1.0 hmmcopy/1.28.1 hmmcopy-scripts/1.0 rstats-cairo/3.6",
           "hmmcopy.runHMMcopy.cgFile": "/.mounts/labs/gsi/testdata/hmmcopy/hmmcopy_data/gc_hg18_chr22.wig",
           "hmmcopy.runHMMcopy.mapFile": "/.mounts/labs/gsi/testdata/hmmcopy/hmmcopy_data/map_hg18_chr22.wig"
           }
