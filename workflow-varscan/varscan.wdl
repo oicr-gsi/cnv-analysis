@@ -67,10 +67,10 @@ meta {
     ]
     
     output_meta: {
-      resultCnvFile: "file with CNV calls, smoothed"
-      resultSnpFile: "file with SNPs, native varscan format"
-      resultIndelFile: "file with Indel calls, native varscan format"
-      resultSnpVcfFile: "file with SNPs, vcf format"
+      resultCnvFile: "file with CNV calls, smoothed",
+      resultSnpFile: "file with SNPs, native varscan format",
+      resultIndelFile: "file with Indel calls, native varscan format",
+      resultSnpVcfFile: "file with SNPs, vcf format",
       resultIndelVcfFile: "file with Indels, vcf format"
     }
 }
