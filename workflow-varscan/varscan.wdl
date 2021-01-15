@@ -33,8 +33,8 @@ scatter( p in makePileups.pileup) {
 call mergeVariantsNative as mergeCNV { input: filePaths = select_all(runVarscanCNV.resultFile), outputFile = sampleID, outputExtension = "copynumber" }
 call mergeVariantsNative as mergeSNP { input: filePaths = select_all(getSnvNative.snpFile), outputFile = sampleID, outputExtension = "snp" }
 call mergeVariantsNative as mergeIND { input: filePaths = select_all(getSnvNative.indelFile), outputFile = sampleID, outputExtension = "indel" }
-call mergeVariantsVcf as mergeSNPvcf { input: filePaths = select_all(getSnvVcf.snpVcfFile), outputFile = sampleID }
-call mergeVariantsVcf as mergeINDvcf { input: filePaths = select_all(getSnvVcf.indelVcfFile), outputFile = sampleID }
+call mergeVariantsVcf as mergeSNPvcf { input: filePaths = select_all(getSnvVcf.snpVcfFile), outputSuffix = "snp", outputFile = sampleID }
+call mergeVariantsVcf as mergeINDvcf { input: filePaths = select_all(getSnvVcf.indelVcfFile), outputSuffix = "indel", outputFile = sampleID }
 
 # Run post-processing job if we have results from runVarscanCNV
 Array[File] cNumberFile = select_all([mergeCNV.mergedVariants])
@@ -222,6 +222,7 @@ task mergeVariantsVcf {
 input {
  Array[File] filePaths
  String outputFile = "concatenated_vcf"
+ String outputSuffix = "snp"
  String modules = "vcftools/0.1.16"
  Int jobMemory = 6
  Int timeout   = 10
@@ -231,12 +232,13 @@ parameter_meta {
   filePaths: "Array of pileup files to concatenate"
   jobMemory: "memory in GB for this job"
   outputFile: "Name of the output file"
+  outputSuffix: "Suffix to use for an output file: snp or indel"
   modules: "modules needed for this task"
   timeout: "Timeout in hours, needed to override imposed limits"
 }
 
 command<<<
- vcf-concat ~{sep=' ' filePaths} > "~{outputFile}.vcf"
+ vcf-concat ~{sep=' ' filePaths} > "~{outputFile}.~{outputSuffix}.vcf"
 >>>
 
 runtime {
@@ -246,7 +248,7 @@ runtime {
 }
 
 output {
-  File? mergedVcf = "~{outputFile}.vcf"
+  File? mergedVcf = "~{outputFile}.~{outputSuffix}.vcf"
 }
 }
 
