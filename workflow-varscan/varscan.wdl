@@ -199,7 +199,7 @@ parameter_meta {
 }
 
 command <<<
- set -euxo pipefail
+ set -euo pipefail
  head ~{sep=' ' filePaths} | grep ^chrom | head -n 1 > "~{outputFile}.~{outputExtension}"
  cat ~{sep=' ' filePaths} | sort -V -k 1,2 | grep -v ^chrom | grep -v ^chrM >> "~{outputFile}.~{outputExtension}"
  cat ~{sep=' ' filePaths} | grep ^chrM | sort -V -k 1,2 >> "~{outputFile}.~{outputExtension}"
