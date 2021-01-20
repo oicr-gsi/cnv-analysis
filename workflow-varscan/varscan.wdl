@@ -244,7 +244,7 @@ parameter_meta {
 }
 
 command<<<
- java -jar $PICARD_ROOT/picard.jar SortVcf I=~{sep=' I=' filePaths} SD=~{seqDictionary} O=~{outputFile}.~{outputSuffix}.vcf
+ java -jar $PICARD_ROOT/picard.jar SortVcf -I ~{sep=' -I ' filePaths} -SD ~{seqDictionary} -O ~{outputFile}.~{outputSuffix}.vcf
 >>>
 
 runtime {
