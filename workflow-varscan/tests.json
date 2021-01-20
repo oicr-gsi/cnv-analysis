@@ -55,7 +55,11 @@
              "chr22:50000001-50818468"             
           ],
           "varscan.makePileups.refFasta": "$HG38_ROOT/hg38_random.fa",
-          "varscan.makePileups.modules": "samtools/0.1.19 hg38/p12"       
+          "varscan.makePileups.modules": "samtools/0.1.19 hg38/p12",
+          "varscan.mergeINDvcf.seqDictionary": "$HG38_ROOT/hg38_random.dict",
+          "varscan.mergeINDvcf.modules": "picard/2.21.2 hg38/p12",
+          "varscan.mergeSNPvcf.seqDictionary": "$HG38_ROOT/hg38_random.dict",
+          "varscan.mergeSNPvcf.modules": "picard/2.21.2 hg38/p12"
         }
       }
    }

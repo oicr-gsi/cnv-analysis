@@ -49,8 +49,8 @@ meta {
 
   dependencies: [
       {
-        name: "vcftools/0.1.16",
-        url: "http://vcftools.sourceforge.net"
+        name: "picard/2.21.2",
+        url: "https://broadinstitute.github.io/picard"
       },
       {
         name: "varscan/2.4.2",
@@ -227,7 +227,8 @@ input {
  Array[File] filePaths
  String outputFile = "concatenated_vcf"
  String outputSuffix = "snp"
- String modules = "vcftools/0.1.16"
+ String modules = "picard/2.21.2 hg19/p13"
+ String seqDictionary = "$HG19_ROOT/hg19_random.dict"
  Int jobMemory = 6
  Int timeout   = 10
 }
@@ -237,12 +238,13 @@ parameter_meta {
   jobMemory: "memory in GB for this job"
   outputFile: "Name of the output file"
   outputSuffix: "Suffix to use for an output file: snp or indel"
+  seqDictionary: ".dict file for the reference in use"
   modules: "modules needed for this task"
   timeout: "Timeout in hours, needed to override imposed limits"
 }
 
 command<<<
- vcf-concat ~{sep=' ' filePaths} > "~{outputFile}.~{outputSuffix}.vcf"
+ java -jar $PICARD_ROOT/picard.jar SortVcf I=~{sep=' I=' filePaths} SD=~{seqDictionary} O=~{outputFile}.~{outputSuffix}.vcf
 >>>
 
 runtime {

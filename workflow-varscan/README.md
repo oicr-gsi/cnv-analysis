@@ -3,6 +3,7 @@
 Varscan 2.2, workflow for calling SNVs and CVs
 
 ## Overview
+
 Varscan workflow, calls Copy Number Variants and SNVs
 Creation of mpileups and calling variants are done with parallel processing
 
@@ -10,7 +11,7 @@ Creation of mpileups and calling variants are done with parallel processing
 
 ## Dependencies
 
-* [vcftools 0.1.16](http://vcftools.sourceforge.net)
+* [picard 2.21.2](https://broadinstitute.github.io/picard)
 * [varscan 2.4.2](http://varscan.sourceforge.net)
 * [samtools 0.1.19](http://www.htslib.org/)
 * [rstats 3.6](http://cran.utstat.utoronto.ca/src/base/R-3/R-3.6.1.tar.gz)
@@ -99,10 +100,12 @@ Parameter|Value|Default|Description
 `mergeSNP.timeout`|Int|10|Timeout in hours, needed to override imposed limits
 `mergeIND.jobMemory`|Int|6|memory in GB for this job
 `mergeIND.timeout`|Int|10|Timeout in hours, needed to override imposed limits
-`mergeSNPvcf.modules`|String|"vcftools/0.1.16"|modules needed for this task
+`mergeSNPvcf.modules`|String|"picard/2.21.2 hg19/p13"|modules needed for this task
+`mergeSNPvcf.seqDictionary`|String|"$HG19_ROOT/hg19_random.dict"|.dict file for the reference in use
 `mergeSNPvcf.jobMemory`|Int|6|memory in GB for this job
 `mergeSNPvcf.timeout`|Int|10|Timeout in hours, needed to override imposed limits
-`mergeINDvcf.modules`|String|"vcftools/0.1.16"|modules needed for this task
+`mergeINDvcf.modules`|String|"picard/2.21.2 hg19/p13"|modules needed for this task
+`mergeINDvcf.seqDictionary`|String|"$HG19_ROOT/hg19_random.dict"|.dict file for the reference in use
 `mergeINDvcf.jobMemory`|Int|6|memory in GB for this job
 `mergeINDvcf.timeout`|Int|10|Timeout in hours, needed to override imposed limits
 `smoothData.varScan`|String|"$VARSCAN_ROOT/VarScan.jar"|Path to VarScan jar file
