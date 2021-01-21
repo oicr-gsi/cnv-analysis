@@ -36,6 +36,32 @@
           "varscan.bedIntervalsPath": "/.mounts/labs/gsi/testdata/varscan/chr22_test_intervals.bed"
         }
       }
+   },
+   {
+      "id": "MATS_chr22",
+      "parameters": {
+        "wdl_inputs": {
+          "varscan.inputNormal": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Bu_R_WG_Buccal_01_S3.chr22.filter.deduped.realigned.recalibrated.bam",
+          "varscan.inputNormalIndex": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Bu_R_WG_Buccal_01_S3.chr22.filter.deduped.realigned.recalibrated.bam.bai",
+          "varscan.inputTumor": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Ly_P_WG_AML_01_S2.chr22.filter.deduped.realigned.recalibrated.bam",
+          "varscan.inputTumorIndex": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Ly_P_WG_AML_01_S2.chr22.filter.deduped.realigned.recalibrated.bam.bai",
+          "varscan.outputFileNamePrefix": "MATS0009",
+          "varscan.chromRegions": [
+             "chr22:1-10000000",
+             "chr22:10000001-20000000",
+             "chr22:20000001-30000000",
+             "chr22:30000001-40000000",
+             "chr22:40000001-50000000",
+             "chr22:50000001-50818468"             
+          ],
+          "varscan.makePileups.refFasta": "$HG38_ROOT/hg38_random.fa",
+          "varscan.makePileups.modules": "samtools/0.1.19 hg38/p12",
+          "varscan.mergeINDvcf.seqDictionary": "$HG38_ROOT/hg38_random.dict",
+          "varscan.mergeINDvcf.modules": "picard/2.21.2 hg38/p12",
+          "varscan.mergeSNPvcf.seqDictionary": "$HG38_ROOT/hg38_random.dict",
+          "varscan.mergeSNPvcf.modules": "picard/2.21.2 hg38/p12"
+        }
+      }
    }
   ]
 }

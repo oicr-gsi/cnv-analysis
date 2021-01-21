@@ -6,7 +6,7 @@
     <version>1.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>workflow-hmmcopy</module>
+        <module>workflow-varscan</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -22,64 +22,75 @@ scatter ( r in splitRegions )   {
   call makePileups { input: inputTumor = inputTumor, inputTumorIndex = inputTumorIndex, inputNormal = inputNormal, inputNormalIndex = inputNormalIndex, region = r }
 }
 
-# Concat and provision merged mplileup
-call concatMpileup { input: filePaths = makePileups.pileup }
-
 # Configure and run Varscan
-call runVarscanCNV { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID }
-call runVarscanSNV as getSnvNative { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID }
-call runVarscanSNV as getSnvVcf { input: inputPileup = concatMpileup.mergedPileup, sampleID = sampleID, outputVcf = 1 }
-
-# Run post-processing job if we have results from runVarscanCNV
-Array[File] cNumberFile = select_all([runVarscanCNV.resultFile])
-if (length(cNumberFile) == 1) {
-    call smoothData{input: copyNumberFile = select_first([runVarscanCNV.resultFile]), sampleID = sampleID}
+scatter( p in makePileups.pileup) {
+  call runVarscanCNV { input: inputPileup = p, sampleID = sampleID }
+  call runVarscanSNV as getSnvNative { input: inputPileup = p, sampleID = sampleID }
+  call runVarscanSNV as getSnvVcf { input: inputPileup = p, sampleID = sampleID, outputVcf = 1 }
 }
 
+# Merge tasks
+call mergeVariantsNative as mergeCNV { input: filePaths = select_all(runVarscanCNV.resultFile), outputFile = sampleID, outputExtension = "copynumber" }
+call mergeVariantsNative as mergeSNP { input: filePaths = select_all(getSnvNative.snpFile), outputFile = sampleID, outputExtension = "snp" }
+call mergeVariantsNative as mergeIND { input: filePaths = select_all(getSnvNative.indelFile), outputFile = sampleID, outputExtension = "indel" }
+call mergeVariantsVcf as mergeSNPvcf { input: filePaths = select_all(getSnvVcf.snpVcfFile), outputSuffix = "snp", outputFile = sampleID }
+call mergeVariantsVcf as mergeINDvcf { input: filePaths = select_all(getSnvVcf.indelVcfFile), outputSuffix = "indel", outputFile = sampleID }
+
+# Run post-processing job if we have results from runVarscanCNV
+Array[File] cNumberFile = select_all([mergeCNV.mergedVariants])
+if (length(cNumberFile) == 1) {
+    call smoothData{input: copyNumberFile = select_first([mergeCNV.mergedVariants]), sampleID = sampleID}
+}
 
 meta {
   author: "Peter Ruzanov"
   email: "peter.ruzanov@oicr.on.ca"
-  description: "Varscan 2.0, workflow for calling SNVs and CVs"
+  description: "Varscan 2.2, workflow for calling SNVs and CVs"
+
   dependencies: [
+      {
+        name: "picard/2.21.2",
+        url: "https://broadinstitute.github.io/picard"
+      },
+      {
+        name: "varscan/2.4.2",
+        url: "http://varscan.sourceforge.net"
+      },
       {
         name: "samtools/0.1.19",
         url: "http://www.htslib.org/"
       },
       {
-        name: "varscan/2.4.2",
-        url: "http://www.htslib.org/"
-      },
-      {
-        name: "java/8",
-        url: "https://www.java.com/en/download/"
+        name: "rstats/3.6",
+        url: "http://cran.utstat.utoronto.ca/src/base/R-3/R-3.6.1.tar.gz"
       }
     ]
+    
     output_meta: {
-      resultCnvFile: "File with copy number variants, native varscan format",
-      resultSnpFile: "File with SNVs, native varscan format",
-      resultIndelFile: "File with INDELs, native varscan format",
-      resultSnpVcfFile: "File with SNVs, vcf format",
-      resultIndelVcfFile: "File with INDELs, vcf format"
+      resultCnvFile: "file with CNV calls, smoothed",
+      resultSnpFile: "file with SNPs, native varscan format",
+      resultIndelFile: "file with Indel calls, native varscan format",
+      resultSnpVcfFile: "file with SNPs, vcf format",
+      resultIndelVcfFile: "file with Indels, vcf format"
     }
 }
 
 parameter_meta {
-  inputTumor: "tumor file"
-  inputNormal: "normal file"
-  inputTumorIndex: ".bai index for tumor file"
-  inputNormalIndex: ".bai index for normal file"
-  outputFileNamePrefix: "Optional prefix for result files"
-  bedIntervalsPath: "Optional path to a bed file with intervals"
-  chromRegions: "Comma-delimited list of chromosomal regions, by default canonical chromosomes for hg19"
+  inputTumor: "input .bam file for tumor sample"
+  inputNormal: "input .bam file for normal sample"
+  inputTumorIndex: "input .bai file for tumor sample"
+  inputNormalIndex: "input .bai file for normal sample"
+  outputFileNamePrefix: "Output file(s) prefix"
+  bedIntervalsPath: "Path to a .bed file used for targeted variant calling"
+  chromRegions: "Regions used for scattering tasks, need to be assembly-specific"
 }
 
 output {
  File? resultCnvFile      = smoothData.filteredData
- File? resultSnpFile      = getSnvNative.snpFile
- File? resultIndelFile    = getSnvNative.indelFile
- File? resultSnpVcfFile   = getSnvVcf.snpVcfFile
- File? resultIndelVcfFile = getSnvVcf.indelVcfFile
+ File? resultSnpFile      = mergeSNP.mergedVariants
+ File? resultIndelFile    = mergeIND.mergedVariants
+ File? resultSnpVcfFile   = mergeSNPvcf.mergedVcf
+ File? resultIndelVcfFile = mergeINDvcf.mergedVcf
 }
 
 }
@@ -130,9 +141,9 @@ input {
  File inputTumor
  File inputTumorIndex
  File inputNormalIndex
- String? refFasta = "$HG19_ROOT/hg19_random.fa"
- String? modules  = "samtools/0.1.19 hg19/p13"
- String? samtools = "$SAMTOOLS_ROOT/bin/samtools"
+ String refFasta = "$HG19_ROOT/hg19_random.fa"
+ String modules  = "samtools/0.1.19 hg19/p13"
+ String samtools = "$SAMTOOLS_ROOT/bin/samtools"
  String region 
  Int jobMemory   = 18
  Int timeout     = 40
@@ -168,23 +179,33 @@ output {
 }
 
 #=============================================================
-# Task for concatenating mplileups
+# Task for concatenating CNV and SNV variants
 #=============================================================
-task concatMpileup {
+task mergeVariantsNative {
 input {
  Array[File] filePaths
- Int jobMemory = 10
- Int timeout   = 20
+ String outputFile = "concatenated_variants"
+ String outputExtension = "csv"
+ Int jobMemory = 6
+ Int timeout   = 10
 }
 
 parameter_meta {
   filePaths: "Array of pileup files to concatenate"
   jobMemory: "memory in GB for this job"
+  outputExtension: "Extension of the output file"
+  outputFile: "Name of the output file"
   timeout: "Timeout in hours, needed to override imposed limits"
 }
 
 command <<<
- zcat ~{sep=' ' filePaths} | gzip -c > normtumor_sorted.pileup.gz
+ set -euo pipefail
+ head -n 1 ~{filePaths[0]} > "~{outputFile}.~{outputExtension}"
+ cat ~{sep=' ' filePaths} | sort -V -k 1,2 | grep -v ^chrom | grep -v ^chrM >> "~{outputFile}.~{outputExtension}"
+ cat ~{sep=' ' filePaths} | awk '{if($1 == "chrM"){print $0}}' | sort -V -k 1,2 >> "~{outputFile}.~{outputExtension}"
+ if [ ! -s ~{outputFile}.~{outputExtension} ] ; then
+  rm ~{outputFile}.~{outputExtension}
+ fi
 >>>
 
 runtime {
@@ -193,7 +214,47 @@ runtime {
 }
 
 output {
-  File mergedPileup = "normtumor_sorted.pileup.gz"
+  File? mergedVariants = "~{outputFile}.~{outputExtension}"
+}
+}
+
+
+#=============================================================
+# Task for concatenating CNV and SNV variants
+#=============================================================
+task mergeVariantsVcf {
+input {
+ Array[File] filePaths
+ String outputFile = "concatenated_vcf"
+ String outputSuffix = "snp"
+ String modules = "picard/2.21.2 hg19/p13"
+ String seqDictionary = "$HG19_ROOT/hg19_random.dict"
+ Int jobMemory = 6
+ Int timeout   = 10
+}
+
+parameter_meta {
+  filePaths: "Array of pileup files to concatenate"
+  jobMemory: "memory in GB for this job"
+  outputFile: "Name of the output file"
+  outputSuffix: "Suffix to use for an output file: snp or indel"
+  seqDictionary: ".dict file for the reference in use"
+  modules: "modules needed for this task"
+  timeout: "Timeout in hours, needed to override imposed limits"
+}
+
+command<<<
+ java -jar $PICARD_ROOT/picard.jar SortVcf I=~{sep=' I=' filePaths} SD=~{seqDictionary} O=~{outputFile}.~{outputSuffix}.vcf
+>>>
+
+runtime {
+ modules: "~{modules}"
+ memory: "~{jobMemory} GB"
+ timeout: "~{timeout}"
+}
+
+output {
+  File? mergedVcf = "~{outputFile}.~{outputSuffix}.vcf"
 }
 }
 
@@ -203,25 +264,25 @@ output {
 task runVarscanSNV {
 input {
   File inputPileup
-  String? sampleID ="VARSCAN"
+  String sampleID ="VARSCAN"
   Float pValue = 0.05
   Int jobMemory  = 20
   Int javaMemory = 6
-  Int minCoverage       = 8
+  Int minCoverage = 8
   Int minCoverageNormal = 8
-  Int minCoverageTumor  = 6
-  Float minVarFreq        = 0.1
-  Float minFreqForHom     = 0.75
-  Float normalPurity      = 1.0
-  Float tumorPurity       = 1.0
-  Float pValueHet         = 0.99
-  Int strandFilter         = 0
-  Int validation           = 0
-  Int outputVcf           = 0
-  String? logFile          = "VARSCAN_SNV.log"
-  String? varScan          = "$VARSCAN_ROOT/VarScan.jar"
-  String? modules          = "varscan/2.4.2 java/8"
-  Int timeout              = 40
+  Int minCoverageTumor = 6
+  Float minVarFreq = 0.1
+  Float minFreqForHom = 0.75
+  Float normalPurity = 1.0
+  Float tumorPurity = 1.0
+  Float pValueHet = 0.99
+  Int strandFilter = 0
+  Int validation = 0
+  Int outputVcf = 0
+  String logFile = "VARSCAN_SNV.log"
+  String varScan = "$VARSCAN_ROOT/VarScan.jar"
+  String modules = "varscan/2.4.2 java/8"
+  Int timeout = 40
 }
 
 parameter_meta {
@@ -234,14 +295,14 @@ parameter_meta {
  minVarFreq: "Minimum variant frequency to call a heterozygote [0.10]"
  minFreqForHom: "Minimum frequency to call homozygote [0.75]"
  normalPurity: "Estimated purity (non-tumor content) of normal sample [1.00]"
- tumorPurity: "Estimated purity of tumor sample [1.00]"
+ tumorPurity: "Estimated purity (tumor content) of normal sample [1.00]"
  pValueHet: "p-value threshold to call a heterozygote [0.99]"
  strandFilter: "If set to 1, removes variants with >90% strand bias"
  validation: "If set to 1, outputs all compared positions even if non-variant"
- outputVcf: "Flag for choosing Vcf output, zero by default"
  jobMemory: "Memory in Gb for this job"
  javaMemory: "Memory in Gb for Java"
  logFile: "File for logging Varscan messages"
+ outputVcf: "Flag that when set to 1 indicates that we need results in vcf format"
  varScan: "path to varscan .jar file"
  modules: "Names and versions of modules"
  timeout: "Timeout in hours, needed to override imposed limits"
@@ -329,13 +390,13 @@ output {
 task runVarscanCNV {
 input {
   File inputPileup
-  String? sampleID ="VARSCAN"
+  String sampleID ="VARSCAN"
   Float pValue = 0.05
   Int jobMemory  = 20
   Int javaMemory = 6
-  String? logFile = "VARSCAN_CNV.log"
-  String? varScan = "$VARSCAN_ROOT/VarScan.jar"
-  String? modules = "varscan/2.4.2 java/8"
+  String logFile = "VARSCAN_CNV.log"
+  String varScan = "$VARSCAN_ROOT/VarScan.jar"
+  String modules = "varscan/2.4.2 java/8"
   Int timeout = 40
 }
 
@@ -409,8 +470,8 @@ output {
 task smoothData {
 input {
  File copyNumberFile
- String? varScan = "$VARSCAN_ROOT/VarScan.jar"
- String? modules = "varscan/2.4.2 java/8 rstats/3.6"
+ String varScan = "$VARSCAN_ROOT/VarScan.jar"
+ String modules = "varscan/2.4.2 java/8 rstats/3.6"
  Int min_coverage  = 20
  Int max_homdel_coverage = 5
  Int min_tumor_coverage = 10
@@ -419,7 +480,7 @@ input {
  Int min_region_size = 10
  Int recenter_up = 0
  Int recenter_down = 0
- String? sampleID ="VARSCAN"
+ String sampleID ="VARSCAN"
  Int jobMemory  = 16
  Int javaMemory = 6
 }
@@ -428,17 +489,17 @@ parameter_meta {
  copyNumberFile: "Output from Varscan"
  varScan: "Path to VarScan jar file"
  modules: "Modules for this job"
- min_coverage: "Minimal coverage to consider when calling variants"
- max_homdel_coverage: "Max coverage for homozygous deletions"
- min_tumor_coverage: "Minimum tumor coverage"
- del_threshold: "Threshold for deletion events"
- amp_threshold: "Threshold for ampification events"
- min_region_size: "Minimum region size of an event"
+ min_coverage: "Fine-tuning parameter for VarScan"
+ max_homdel_coverage: "Max coverage form homozygous deletion, default is 5"
+ min_tumor_coverage: "Min coverage in tumor sample, default is 10"
+ del_threshold: "Fine-tuning parameter for VarScan"
+ amp_threshold: "Amplification threshold to report, default is 0.25"
+ min_region_size: "Fine-tuning parameter for VarScan"
  recenter_up: "Fine-tuning parameter for VarScan"
  recenter_down: "Fine-tuning parameter for VarScan"
- sampleID: "optional sample ID prefix"
- jobMemory: "job memory, in GB"
- javaMemory: "Memory allocated for java Heap"
+ sampleID: "sample id (used as prefix for result files)"
+ jobMemory: "Memory in Gb for this job"
+ javaMemory: "Memory in Gb for Java"
 }
 
 command <<<

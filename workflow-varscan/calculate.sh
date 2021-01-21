@@ -1,3 +1,3 @@
 #!/bin/bash
 cd $1
-ls | sed 's/.*\.//' | sort | uniq -c
+ls -C | xargs wc -l | sort -n | sed 's!\S*/!\t!'
