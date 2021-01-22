@@ -246,6 +246,7 @@ parameter_meta {
 }
 
 command<<<
+ set -euxo pipefail
  unset _JAVA_OPTIONS
  java -Xmx~{javaMemory}G -jar $PICARD_ROOT/picard.jar SortVcf I=~{sep=' I=' filePaths} SD=~{seqDictionary} O=~{outputFile}.~{outputSuffix}.vcf
 >>>
