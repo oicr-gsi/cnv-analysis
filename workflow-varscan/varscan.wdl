@@ -229,13 +229,15 @@ input {
  String outputSuffix = "snp"
  String modules = "picard/2.21.2 hg19/p13"
  String seqDictionary = "$HG19_ROOT/hg19_random.dict"
- Int jobMemory = 6
+ Int jobMemory = 12
+ Int javaMemory = 8
  Int timeout   = 10
 }
 
 parameter_meta {
   filePaths: "Array of pileup files to concatenate"
   jobMemory: "memory in GB for this job"
+  javaMemory: "memory in GB for java VM"
   outputFile: "Name of the output file"
   outputSuffix: "Suffix to use for an output file: snp or indel"
   seqDictionary: ".dict file for the reference in use"
@@ -244,7 +246,8 @@ parameter_meta {
 }
 
 command<<<
- java -jar $PICARD_ROOT/picard.jar SortVcf I=~{sep=' I=' filePaths} SD=~{seqDictionary} O=~{outputFile}.~{outputSuffix}.vcf
+ unset _JAVA_OPTIONS
+ java -Xmx~{javaMemory}G -jar $PICARD_ROOT/picard.jar SortVcf I=~{sep=' I=' filePaths} SD=~{seqDictionary} O=~{outputFile}.~{outputSuffix}.vcf
 >>>
 
 runtime {
