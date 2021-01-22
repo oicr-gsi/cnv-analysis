@@ -102,11 +102,13 @@ Parameter|Value|Default|Description
 `mergeIND.timeout`|Int|10|Timeout in hours, needed to override imposed limits
 `mergeSNPvcf.modules`|String|"picard/2.21.2 hg19/p13"|modules needed for this task
 `mergeSNPvcf.seqDictionary`|String|"$HG19_ROOT/hg19_random.dict"|.dict file for the reference in use
-`mergeSNPvcf.jobMemory`|Int|6|memory in GB for this job
+`mergeSNPvcf.jobMemory`|Int|12|memory in GB for this job
+`mergeSNPvcf.javaMemory`|Int|8|memory in GB for java VM
 `mergeSNPvcf.timeout`|Int|10|Timeout in hours, needed to override imposed limits
 `mergeINDvcf.modules`|String|"picard/2.21.2 hg19/p13"|modules needed for this task
 `mergeINDvcf.seqDictionary`|String|"$HG19_ROOT/hg19_random.dict"|.dict file for the reference in use
-`mergeINDvcf.jobMemory`|Int|6|memory in GB for this job
+`mergeINDvcf.jobMemory`|Int|12|memory in GB for this job
+`mergeINDvcf.javaMemory`|Int|8|memory in GB for java VM
 `mergeINDvcf.timeout`|Int|10|Timeout in hours, needed to override imposed limits
 `smoothData.varScan`|String|"$VARSCAN_ROOT/VarScan.jar"|Path to VarScan jar file
 `smoothData.modules`|String|"varscan/2.4.2 java/8 rstats/3.6"|Modules for this job
