@@ -1,3 +1,5 @@
+## 2.2.1 - 2021-02-01
+- Increment version to avoid overlap with a compromized installation
 ## 2.2   - 2021-01-15
 - Re-implemented to cut on merging pileups and scatter variant-calling tasks
 ## 2.1.1 - 2020-04-06
