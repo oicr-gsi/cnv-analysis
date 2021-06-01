@@ -7,7 +7,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>workflow-varscan</module>
-    </modules>
+        <module>workflow-freec</module>
+        <module>workflow-hmmcopy</module>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

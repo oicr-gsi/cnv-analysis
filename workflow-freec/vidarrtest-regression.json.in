@@ -1,0 +1,227 @@
+[
+    {
+        "arguments": {
+            "freec.bedgraphOutput": null,
+            "freec.inputNormal": null,
+            "freec.inputTumor": {
+                "contents": {
+                    "configuration": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/42002730/SWID_14950765_PCSI_1106_Pa_P_PE_625_WG_5270_190819_A00827_0025_BHKC7JDSXX_AAGTTATC-AATAGCAA_L004_001.annotated.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "freec.outputFileNamePrefix": "TEST_PCSI_1106_NC",
+            "freec.runFreec.breakPointThreshold": null,
+            "freec.runFreec.chrFiles": null,
+            "freec.runFreec.chrLenFile": null,
+            "freec.runFreec.coefficientOfVariation": null,
+            "freec.runFreec.configFile": null,
+            "freec.runFreec.contaminationAdjustment": "None",
+            "freec.runFreec.contaminationFraction": null,
+            "freec.runFreec.inputFormat": null,
+            "freec.runFreec.intervalFile": null,
+            "freec.runFreec.jobMemory": null,
+            "freec.runFreec.logPath": null,
+            "freec.runFreec.mateOrientation": null,
+            "freec.runFreec.maxThreads": null,
+            "freec.runFreec.modules": null,
+            "freec.runFreec.ploidy": null,
+            "freec.runFreec.telocentromeric": null,
+            "freec.runFreec.timeout": null,
+            "freec.runFreec.window": null,
+            "freec.sequencingType": "WG"
+        },
+        "description": "freec workflow test",
+        "engineArguments": {},
+        "id": "TEST_NoControl",
+        "metadata": {
+            "freec.cnvNormal": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.cnvTumor": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.gcProfile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.infoFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.ratioBedGraph": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.ratioFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.regionFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_NoControl_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            }
+        },
+        "validators": [
+            {
+                "metrics_calculate": "@CHECKOUT@/./calculate.sh",
+                "metrics_compare": "@CHECKOUT@/./compare.sh",
+                "output_metrics": "/.mounts/labs/gsi/testdata/freec/output_metrics/TEST_NoControl.metrics",
+                "type": "script"
+            }
+        ]
+    },
+    {
+        "arguments": {
+            "freec.bedgraphOutput": null,
+            "freec.inputNormal": {
+                "contents": {
+                    "configuration": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/11510526/SWID_14950709_PCSI_1106_Ly_R_PE_619_WG_190819_A00827_0025_BHKC7JDSXX_TGACTACT-CCTTACAG_L002_001.annotated.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "freec.inputTumor": {
+                "contents": {
+                    "configuration": "/oicr/data/archive/seqware/seqware_analysis_12/hsqwprod/seqware-results/BwaMem_1.2/42002730/SWID_14950765_PCSI_1106_Pa_P_PE_625_WG_5270_190819_A00827_0025_BHKC7JDSXX_AAGTTATC-AATAGCAA_L004_001.annotated.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "freec.outputFileNamePrefix": "TEST_PCSI_1106",
+            "freec.runFreec.breakPointThreshold": null,
+            "freec.runFreec.chrFiles": null,
+            "freec.runFreec.chrLenFile": null,
+            "freec.runFreec.coefficientOfVariation": null,
+            "freec.runFreec.configFile": null,
+            "freec.runFreec.contaminationAdjustment": "None",
+            "freec.runFreec.contaminationFraction": null,
+            "freec.runFreec.inputFormat": null,
+            "freec.runFreec.intervalFile": null,
+            "freec.runFreec.jobMemory": null,
+            "freec.runFreec.logPath": null,
+            "freec.runFreec.mateOrientation": null,
+            "freec.runFreec.maxThreads": null,
+            "freec.runFreec.modules": null,
+            "freec.runFreec.ploidy": null,
+            "freec.runFreec.telocentromeric": null,
+            "freec.runFreec.timeout": null,
+            "freec.runFreec.window": null,
+            "freec.sequencingType": "WG"
+        },
+        "description": "freec workflow test",
+        "engineArguments": {},
+        "id": "TEST_Control",
+        "metadata": {
+            "freec.cnvNormal": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.cnvTumor": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.gcProfile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.infoFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.ratioBedGraph": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.ratioFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "freec.regionFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_freec_TEST_Control_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            }
+        },
+        "validators": [
+            {
+                "metrics_calculate": "@CHECKOUT@/./calculate.sh",
+                "metrics_compare": "@CHECKOUT@/./compare.sh",
+                "output_metrics": "/.mounts/labs/gsi/testdata/freec/output_metrics/TEST_Control.metrics",
+                "type": "script"
+            }
+        ]
+    }
+]

@@ -7,10 +7,10 @@ input {
     File?   inputNormal
     Boolean bedgraphOutput = true
     String  sequencingType
-    String? outputFileNamePrefix = ""
+    String  outputFileNamePrefix = ""
 }
 
-String? sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
+String sampleID = if outputFileNamePrefix=="" then basename(inputTumor, ".bam") else outputFileNamePrefix
 
 # Configure and run FREEC
 call runFreec { input: inputTumor = inputTumor, inputNormal = inputNormal, sampleID = sampleID, sequencingType = sequencingType, bedGraphOutput = if bedgraphOutput then "TRUE" else "FALSE" }
@@ -40,27 +40,27 @@ task runFreec {
 input {
   File  inputTumor
   String sequencingType
-  String? sampleID = "TEST"
+  String sampleID = "TEST"
   File? inputNormal
   File? intervalFile
-  String? chrFiles = "$HG19_ROOT/"
-  String? chrLenFile = "$HG19_ROOT/hg19_random.fa.fai"
-  String? bedGraphOutput = "TRUE"
-  Float?  coefficientOfVariation = 0.05
-  Float?  breakPointThreshold = 0.8
-  String? contaminationAdjustment
-  Float?  contaminationFraction = 0.0
-  Int?    window = 1000
-  Int?    ploidy = 2
-  Int?    jobMemory  = 20
-  Int?    maxThreads = 4
-  Int?    telocentromeric = 50000
-  String? inputFormat = "BAM"
-  String? mateOrientation = "FR"
-  String? configFile = "config_freec.conf"
-  String? logPath = "freec_run.log"
-  String? modules = "freec/11.5 bedtools/2.27 samtools/0.1.19 hg19/p13"
-  Int     timeout = 72
+  String chrFiles = "$HG19_ROOT/"
+  String chrLenFile = "$HG19_ROOT/hg19_random.fa.fai"
+  String bedGraphOutput = "TRUE"
+  Float  coefficientOfVariation = 0.05
+  Float  breakPointThreshold = 0.8
+  String contaminationAdjustment
+  Float  contaminationFraction = 0.0
+  Int    window = 1000
+  Int    ploidy = 2
+  Int    jobMemory  = 20
+  Int    maxThreads = 4
+  Int    telocentromeric = 50000
+  String inputFormat = "BAM"
+  String mateOrientation = "FR"
+  String configFile = "config_freec.conf"
+  String logPath = "freec_run.log"
+  String modules = "freec/11.5 bedtools/2.27 samtools/0.1.19 hg19/p13"
+  Int    timeout = 72
 
 }
 
@@ -86,7 +86,6 @@ parameter_meta {
  mateOrientation: "For paired-end Illumina we need FR, other types are also supported"
  configFile: "config_freec.conf"
  logPath: "We have a log file which is not provisioned but can be examined if anything goes wrong"
- jobMemory: "memory allocated for Job"
  modules: "Names and versions of modules"
  timeout: "Timeout in hours, needed to override imposed limits"
 }
@@ -164,8 +163,8 @@ command <<<
  mv ~{basename(inputTumor)}_ratio.txt ~{sampleID}_ratio.txt
  mv ~{basename(inputTumor)}_sample.cpn ~{sampleID}_sample.cpn
 
- if [[ -f ~{basename(inputNormal + "")}"_control.cpn" ]]; then
-    mv ~{basename(inputNormal + "")}_control.cpn ~{sampleID}_control.cpn
+ if [[ -f ~{inputNormal} ]]; then
+    mv  ~{basename(inputNormal)}"_control.cpn" ~{sampleID}_control.cpn
  fi
 
  if [[ -f "~{basename(inputTumor)}_GC_profile.cpn" ]]; then
