@@ -1,0 +1,561 @@
+[
+    {
+        "arguments": {
+            "varscan.bedIntervalsPath": null,
+            "varscan.chromRegions": null,
+            "varscan.expandRegions.jobMemory": null,
+            "varscan.getSnvNative.javaMemory": null,
+            "varscan.getSnvNative.jobMemory": null,
+            "varscan.getSnvNative.logFile": null,
+            "varscan.getSnvNative.minCoverage": null,
+            "varscan.getSnvNative.minCoverageNormal": null,
+            "varscan.getSnvNative.minCoverageTumor": null,
+            "varscan.getSnvNative.minFreqForHom": null,
+            "varscan.getSnvNative.minVarFreq": null,
+            "varscan.getSnvNative.modules": null,
+            "varscan.getSnvNative.normalPurity": null,
+            "varscan.getSnvNative.outputVcf": null,
+            "varscan.getSnvNative.pValue": null,
+            "varscan.getSnvNative.pValueHet": null,
+            "varscan.getSnvNative.strandFilter": null,
+            "varscan.getSnvNative.timeout": null,
+            "varscan.getSnvNative.tumorPurity": null,
+            "varscan.getSnvNative.validation": null,
+            "varscan.getSnvNative.varScan": null,
+            "varscan.getSnvVcf.javaMemory": null,
+            "varscan.getSnvVcf.jobMemory": null,
+            "varscan.getSnvVcf.logFile": null,
+            "varscan.getSnvVcf.minCoverage": null,
+            "varscan.getSnvVcf.minCoverageNormal": null,
+            "varscan.getSnvVcf.minCoverageTumor": null,
+            "varscan.getSnvVcf.minFreqForHom": null,
+            "varscan.getSnvVcf.minVarFreq": null,
+            "varscan.getSnvVcf.modules": null,
+            "varscan.getSnvVcf.normalPurity": null,
+            "varscan.getSnvVcf.pValue": null,
+            "varscan.getSnvVcf.pValueHet": null,
+            "varscan.getSnvVcf.strandFilter": null,
+            "varscan.getSnvVcf.timeout": null,
+            "varscan.getSnvVcf.tumorPurity": null,
+            "varscan.getSnvVcf.validation": null,
+            "varscan.getSnvVcf.varScan": null,
+            "varscan.inputNormal": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Ly_R_PE_598_WG_170201_D00355_0145_ACADTLANXX_GTAGAG_L008_001.annotated.chr22_dupmarked.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputNormalIndex": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Ly_R_PE_598_WG_170201_D00355_0145_ACADTLANXX_GTAGAG_L008_001.annotated.chr22_dupmarked.bam.bai",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputTumor": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Pa_P_PE_501_WG_526_170203_D00343_0160_ACACFLANXX_CCGTCC_L008_001.annotated.chr22_dupmarked.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputTumorIndex": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Pa_P_PE_501_WG_526_170203_D00343_0160_ACACFLANXX_CCGTCC_L008_001.annotated.chr22_dupmarked.bam.bai",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.makePileups.jobMemory": null,
+            "varscan.makePileups.modules": null,
+            "varscan.makePileups.refFasta": null,
+            "varscan.makePileups.samtools": null,
+            "varscan.makePileups.timeout": null,
+            "varscan.mergeCNV.jobMemory": null,
+            "varscan.mergeCNV.timeout": null,
+            "varscan.mergeIND.jobMemory": null,
+            "varscan.mergeIND.timeout": null,
+            "varscan.mergeINDvcf.javaMemory": null,
+            "varscan.mergeINDvcf.jobMemory": null,
+            "varscan.mergeINDvcf.modules": null,
+            "varscan.mergeINDvcf.seqDictionary": null,
+            "varscan.mergeINDvcf.timeout": null,
+            "varscan.mergeSNP.jobMemory": null,
+            "varscan.mergeSNP.timeout": null,
+            "varscan.mergeSNPvcf.javaMemory": null,
+            "varscan.mergeSNPvcf.jobMemory": null,
+            "varscan.mergeSNPvcf.modules": null,
+            "varscan.mergeSNPvcf.seqDictionary": null,
+            "varscan.mergeSNPvcf.timeout": null,
+            "varscan.outputFileNamePrefix": "VARTEST",
+            "varscan.runVarscanCNV.javaMemory": null,
+            "varscan.runVarscanCNV.jobMemory": null,
+            "varscan.runVarscanCNV.logFile": null,
+            "varscan.runVarscanCNV.modules": null,
+            "varscan.runVarscanCNV.pValue": null,
+            "varscan.runVarscanCNV.timeout": null,
+            "varscan.runVarscanCNV.varScan": null,
+            "varscan.smoothData.amp_threshold": null,
+            "varscan.smoothData.del_threshold": null,
+            "varscan.smoothData.javaMemory": null,
+            "varscan.smoothData.jobMemory": null,
+            "varscan.smoothData.max_homdel_coverage": null,
+            "varscan.smoothData.min_coverage": null,
+            "varscan.smoothData.min_region_size": null,
+            "varscan.smoothData.min_tumor_coverage": null,
+            "varscan.smoothData.modules": null,
+            "varscan.smoothData.recenter_down": null,
+            "varscan.smoothData.recenter_up": null,
+            "varscan.smoothData.varScan": null
+        },
+        "description": "Varscan workflow test",
+        "engineArguments": {},
+        "id": "PCSI_chr22",
+        "metadata": {
+            "varscan.resultCnvFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultIndelFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultIndelVcfFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultSnpFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultSnpVcfFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            }
+        },
+        "validators": [
+            {
+                "metrics_calculate": "@CHECKOUT@/./calculate.sh",
+                "metrics_compare": "@CHECKOUT@/./compare.sh",
+                "output_metrics": "/.mounts/labs/gsi/testdata/varscan/output_metrics/PCSI_chr22.metrics",
+                "type": "script"
+            }
+        ]
+    },
+    {
+        "arguments": {
+            "varscan.bedIntervalsPath": "/.mounts/labs/gsi/testdata/varscan/chr22_test_intervals.bed",
+            "varscan.chromRegions": null,
+            "varscan.expandRegions.jobMemory": null,
+            "varscan.getSnvNative.javaMemory": null,
+            "varscan.getSnvNative.jobMemory": null,
+            "varscan.getSnvNative.logFile": null,
+            "varscan.getSnvNative.minCoverage": null,
+            "varscan.getSnvNative.minCoverageNormal": null,
+            "varscan.getSnvNative.minCoverageTumor": null,
+            "varscan.getSnvNative.minFreqForHom": null,
+            "varscan.getSnvNative.minVarFreq": null,
+            "varscan.getSnvNative.modules": null,
+            "varscan.getSnvNative.normalPurity": null,
+            "varscan.getSnvNative.outputVcf": null,
+            "varscan.getSnvNative.pValue": null,
+            "varscan.getSnvNative.pValueHet": null,
+            "varscan.getSnvNative.strandFilter": null,
+            "varscan.getSnvNative.timeout": null,
+            "varscan.getSnvNative.tumorPurity": null,
+            "varscan.getSnvNative.validation": null,
+            "varscan.getSnvNative.varScan": null,
+            "varscan.getSnvVcf.javaMemory": null,
+            "varscan.getSnvVcf.jobMemory": null,
+            "varscan.getSnvVcf.logFile": null,
+            "varscan.getSnvVcf.minCoverage": null,
+            "varscan.getSnvVcf.minCoverageNormal": null,
+            "varscan.getSnvVcf.minCoverageTumor": null,
+            "varscan.getSnvVcf.minFreqForHom": null,
+            "varscan.getSnvVcf.minVarFreq": null,
+            "varscan.getSnvVcf.modules": null,
+            "varscan.getSnvVcf.normalPurity": null,
+            "varscan.getSnvVcf.pValue": null,
+            "varscan.getSnvVcf.pValueHet": null,
+            "varscan.getSnvVcf.strandFilter": null,
+            "varscan.getSnvVcf.timeout": null,
+            "varscan.getSnvVcf.tumorPurity": null,
+            "varscan.getSnvVcf.validation": null,
+            "varscan.getSnvVcf.varScan": null,
+            "varscan.inputNormal": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Ly_R_PE_598_WG_170201_D00355_0145_ACADTLANXX_GTAGAG_L008_001.annotated.chr22_dupmarked.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputNormalIndex": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Ly_R_PE_598_WG_170201_D00355_0145_ACADTLANXX_GTAGAG_L008_001.annotated.chr22_dupmarked.bam.bai",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputTumor": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Pa_P_PE_501_WG_526_170203_D00343_0160_ACACFLANXX_CCGTCC_L008_001.annotated.chr22_dupmarked.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputTumorIndex": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/delly/PCSI_0090_Pa_P_PE_501_WG_526_170203_D00343_0160_ACACFLANXX_CCGTCC_L008_001.annotated.chr22_dupmarked.bam.bai",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.makePileups.jobMemory": null,
+            "varscan.makePileups.modules": null,
+            "varscan.makePileups.refFasta": null,
+            "varscan.makePileups.samtools": null,
+            "varscan.makePileups.timeout": null,
+            "varscan.mergeCNV.jobMemory": null,
+            "varscan.mergeCNV.timeout": null,
+            "varscan.mergeIND.jobMemory": null,
+            "varscan.mergeIND.timeout": null,
+            "varscan.mergeINDvcf.javaMemory": null,
+            "varscan.mergeINDvcf.jobMemory": null,
+            "varscan.mergeINDvcf.modules": null,
+            "varscan.mergeINDvcf.seqDictionary": null,
+            "varscan.mergeINDvcf.timeout": null,
+            "varscan.mergeSNP.jobMemory": null,
+            "varscan.mergeSNP.timeout": null,
+            "varscan.mergeSNPvcf.javaMemory": null,
+            "varscan.mergeSNPvcf.jobMemory": null,
+            "varscan.mergeSNPvcf.modules": null,
+            "varscan.mergeSNPvcf.seqDictionary": null,
+            "varscan.mergeSNPvcf.timeout": null,
+            "varscan.outputFileNamePrefix": "VARTEST",
+            "varscan.runVarscanCNV.javaMemory": null,
+            "varscan.runVarscanCNV.jobMemory": null,
+            "varscan.runVarscanCNV.logFile": null,
+            "varscan.runVarscanCNV.modules": null,
+            "varscan.runVarscanCNV.pValue": null,
+            "varscan.runVarscanCNV.timeout": null,
+            "varscan.runVarscanCNV.varScan": null,
+            "varscan.smoothData.amp_threshold": null,
+            "varscan.smoothData.del_threshold": null,
+            "varscan.smoothData.javaMemory": null,
+            "varscan.smoothData.jobMemory": null,
+            "varscan.smoothData.max_homdel_coverage": null,
+            "varscan.smoothData.min_coverage": null,
+            "varscan.smoothData.min_region_size": null,
+            "varscan.smoothData.min_tumor_coverage": null,
+            "varscan.smoothData.modules": null,
+            "varscan.smoothData.recenter_down": null,
+            "varscan.smoothData.recenter_up": null,
+            "varscan.smoothData.varScan": null
+        },
+        "description": "Varscan workflow test",
+        "engineArguments": {},
+        "id": "PCSI_chr22_intervals",
+        "metadata": {
+            "varscan.resultCnvFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_intervals_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultIndelFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_intervals_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultIndelVcfFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_intervals_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultSnpFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_intervals_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultSnpVcfFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_PCSI_chr22_intervals_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            }
+        },
+        "validators": [
+            {
+                "metrics_calculate": "@CHECKOUT@/./calculate.sh",
+                "metrics_compare": "@CHECKOUT@/./compare.sh",
+                "output_metrics": "/.mounts/labs/gsi/testdata/varscan/output_metrics/PCSI_chr22_intervals.metrics",
+                "type": "script"
+            }
+        ]
+    },
+    {
+        "arguments": {
+            "varscan.bedIntervalsPath": null,
+            "varscan.chromRegions": [
+                "chr22:1-10000000",
+                "chr22:10000001-20000000",
+                "chr22:20000001-30000000",
+                "chr22:30000001-40000000",
+                "chr22:40000001-50000000",
+                "chr22:50000001-50818468"
+            ],
+            "varscan.expandRegions.jobMemory": null,
+            "varscan.getSnvNative.javaMemory": null,
+            "varscan.getSnvNative.jobMemory": null,
+            "varscan.getSnvNative.logFile": null,
+            "varscan.getSnvNative.minCoverage": null,
+            "varscan.getSnvNative.minCoverageNormal": null,
+            "varscan.getSnvNative.minCoverageTumor": null,
+            "varscan.getSnvNative.minFreqForHom": null,
+            "varscan.getSnvNative.minVarFreq": null,
+            "varscan.getSnvNative.modules": null,
+            "varscan.getSnvNative.normalPurity": null,
+            "varscan.getSnvNative.outputVcf": null,
+            "varscan.getSnvNative.pValue": null,
+            "varscan.getSnvNative.pValueHet": null,
+            "varscan.getSnvNative.strandFilter": null,
+            "varscan.getSnvNative.timeout": null,
+            "varscan.getSnvNative.tumorPurity": null,
+            "varscan.getSnvNative.validation": null,
+            "varscan.getSnvNative.varScan": null,
+            "varscan.getSnvVcf.javaMemory": null,
+            "varscan.getSnvVcf.jobMemory": null,
+            "varscan.getSnvVcf.logFile": null,
+            "varscan.getSnvVcf.minCoverage": null,
+            "varscan.getSnvVcf.minCoverageNormal": null,
+            "varscan.getSnvVcf.minCoverageTumor": null,
+            "varscan.getSnvVcf.minFreqForHom": null,
+            "varscan.getSnvVcf.minVarFreq": null,
+            "varscan.getSnvVcf.modules": null,
+            "varscan.getSnvVcf.normalPurity": null,
+            "varscan.getSnvVcf.pValue": null,
+            "varscan.getSnvVcf.pValueHet": null,
+            "varscan.getSnvVcf.strandFilter": null,
+            "varscan.getSnvVcf.timeout": null,
+            "varscan.getSnvVcf.tumorPurity": null,
+            "varscan.getSnvVcf.validation": null,
+            "varscan.getSnvVcf.varScan": null,
+            "varscan.inputNormal": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Bu_R_WG_Buccal_01_S3.chr22.filter.deduped.realigned.recalibrated.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputNormalIndex": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Bu_R_WG_Buccal_01_S3.chr22.filter.deduped.realigned.recalibrated.bam.bai",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputTumor": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Ly_P_WG_AML_01_S2.chr22.filter.deduped.realigned.recalibrated.bam",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.inputTumorIndex": {
+                "contents": {
+                    "configuration": "/.mounts/labs/gsi/testdata/varscan/MATS_0009_Ly_P_WG_AML_01_S2.chr22.filter.deduped.realigned.recalibrated.bam.bai",
+                    "externalIds": [
+                        {
+                            "id": "TEST",
+                            "provider": "TEST"
+                        }
+                    ]
+                },
+                "type": "EXTERNAL"
+            },
+            "varscan.makePileups.jobMemory": null,
+            "varscan.makePileups.modules": "samtools/0.1.19 hg38/p12",
+            "varscan.makePileups.refFasta": "$HG38_ROOT/hg38_random.fa",
+            "varscan.makePileups.samtools": null,
+            "varscan.makePileups.timeout": null,
+            "varscan.mergeCNV.jobMemory": null,
+            "varscan.mergeCNV.timeout": null,
+            "varscan.mergeIND.jobMemory": null,
+            "varscan.mergeIND.timeout": null,
+            "varscan.mergeINDvcf.javaMemory": null,
+            "varscan.mergeINDvcf.jobMemory": null,
+            "varscan.mergeINDvcf.modules": "picard/2.21.2 hg38/p12",
+            "varscan.mergeINDvcf.seqDictionary": "$HG38_ROOT/hg38_random.dict",
+            "varscan.mergeINDvcf.timeout": null,
+            "varscan.mergeSNP.jobMemory": null,
+            "varscan.mergeSNP.timeout": null,
+            "varscan.mergeSNPvcf.javaMemory": null,
+            "varscan.mergeSNPvcf.jobMemory": null,
+            "varscan.mergeSNPvcf.modules": "picard/2.21.2 hg38/p12",
+            "varscan.mergeSNPvcf.seqDictionary": "$HG38_ROOT/hg38_random.dict",
+            "varscan.mergeSNPvcf.timeout": null,
+            "varscan.outputFileNamePrefix": "MATS0009",
+            "varscan.runVarscanCNV.javaMemory": null,
+            "varscan.runVarscanCNV.jobMemory": null,
+            "varscan.runVarscanCNV.logFile": null,
+            "varscan.runVarscanCNV.modules": null,
+            "varscan.runVarscanCNV.pValue": null,
+            "varscan.runVarscanCNV.timeout": null,
+            "varscan.runVarscanCNV.varScan": null,
+            "varscan.smoothData.amp_threshold": null,
+            "varscan.smoothData.del_threshold": null,
+            "varscan.smoothData.javaMemory": null,
+            "varscan.smoothData.jobMemory": null,
+            "varscan.smoothData.max_homdel_coverage": null,
+            "varscan.smoothData.min_coverage": null,
+            "varscan.smoothData.min_region_size": null,
+            "varscan.smoothData.min_tumor_coverage": null,
+            "varscan.smoothData.modules": null,
+            "varscan.smoothData.recenter_down": null,
+            "varscan.smoothData.recenter_up": null,
+            "varscan.smoothData.varScan": null
+        },
+        "description": "Varscan workflow test",
+        "engineArguments": {},
+        "id": "MATS_chr22",
+        "metadata": {
+            "varscan.resultCnvFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_MATS_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultIndelFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_MATS_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultIndelVcfFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_MATS_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultSnpFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_MATS_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            },
+            "varscan.resultSnpVcfFile": {
+                "contents": [
+                    {
+                        "outputDirectory": "@SCRATCH@/@DATE@_Workflow_varscan_MATS_chr22_@JENKINSID@"
+                    }
+                ],
+                "type": "ALL"
+            }
+        },
+        "validators": [
+            {
+                "metrics_calculate": "@CHECKOUT@/./calculate.sh",
+                "metrics_compare": "@CHECKOUT@/./compare.sh",
+                "output_metrics": "/.mounts/labs/gsi/testdata/varscan/output_metrics/MATS_chr22.metrics",
+                "type": "script"
+            }
+        ]
+    }
+]

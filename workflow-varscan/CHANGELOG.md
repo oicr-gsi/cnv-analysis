@@ -1,3 +1,5 @@
+## 2.2.1 - 2021-06-01
+- Migrating to Vidarr
 ## 2.2.1 - 2021-02-01
 - Increment version to avoid overlap with a compromized installation
 ## 2.2   - 2021-01-15
