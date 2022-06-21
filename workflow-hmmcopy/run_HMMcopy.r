@@ -1,7 +1,10 @@
 # Below commands are for creating segmentation files and producing some QC images
 # outputBasename used to construct names for files produced by this script
+.libPaths(.libPaths()[c(2,3,4)])
 
 library(HMMcopy)
+
+.libPaths()
 
 cmd_args=commandArgs(trailingOnly = TRUE)
 # Arguments should be passed as: normal.wig, tumor.wig, refGC.wig, ref_mappable.wig, outputBasename
@@ -52,15 +55,13 @@ chroms<-unique(segmented_copy$segs$chr)
 # need to do it one plot per chromosome 1200x450
 print("Producing Segmentation plots...")
 par(mfrow = c(1, 1))
-for (c in 1:length(chroms)) {
- if (!grepl("_",chroms[c]) && !grepl("M",chroms[c])) {
-	 png(filename = paste(outputBasename,"s_plot", chroms[c], "png", sep="."),width = 1200, height = 450, units="px", pointsize=15, bg="white")
-	 plotSegments(tum_corrected_copy, segmented_copy, pch = ".", ylab = "Tumour Copy Number", xlab = "Chromosome Position",chr = chroms[c], main = paste("Segmentation for Chromosome",chroms[c], sep=" "))
-	 cols <- stateCols()
-	 legend("topleft", c("HOMD", "HETD", "NEUT", "GAIN", "AMPL", "HLAMP"), fill = cols, horiz = TRUE, bty = "n", cex = 0.9)
-	 dev.off()
- } else {
-	 print(paste("Chromosome",c,"cannot be plotted with  plotSegments",sep = " "))
- }
-}
+# Remove non-canonical and mitochondrial chromosomes
+BMASK<-(!grepl("_",chroms) & !grepl("M", chroms))
+CHROMS<-chroms[BMASK]
+
+png(filename = paste(outputBasename,"s_plot", "png", sep="."),width = 1200, height = 450, units="px", pointsize=15, bg="white")
+plotSegments(tum_corrected_copy, segmented_copy, pch = ".", ylab = "Tumour Copy Number", xlab = "Chromosome Position",chr = CHROMS, main = "Segmentation for Chromosomes")
+cols <- stateCols()
+legend("topleft", c("HOMD", "HETD", "NEUT", "GAIN", "AMPL", "HLAMP"), fill = cols, horiz = TRUE, bty = "n", cex = 0.9)
+dev.off()
 
